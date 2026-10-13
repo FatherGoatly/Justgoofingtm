@@ -44,7 +44,8 @@ export function createConsole(output) {
 
 /**
  * Describe an error thrown by learner code, extracting the learner-visible line number where possible.
- * The body of a dynamically created function starts on line 3 of its stack frame in V8.
+ * The body of a dynamically created function starts on line 3 of its stack frame in V8, and compile() adds one
+ * line for the opening block brace, so learner code starts on line 4.
  * @param {unknown} err
  * @returns {{name:string, message:string, stack?:string, line:number|null}}
  */
@@ -52,7 +53,8 @@ export function describeError(err) {
   if ( !(err instanceof Error) ) return { name: "Error", message: String(err), line: null };
   let line = null;
   const m = /<anonymous>:(\d+):(\d+)/.exec(err.stack ?? "") ?? /eval at [^\n]*:(\d+):(\d+)/.exec(err.stack ?? "");
-  if ( m ) line = Math.max(1, parseInt(m[1], 10) - 2);
+  // Function header (line 1), function brace (line 2), block brace (line 3); learner code starts on line 4.
+  if ( m ) line = Math.max(1, parseInt(m[1], 10) - 3);
   return { name: err.name, message: err.message, stack: err.stack, line };
 }
 
@@ -64,11 +66,13 @@ export function describeError(err) {
  * @returns {Function}
  */
 export function compile(code, globalNames, collect=[]) {
-  let body = `${code}\n`;
+  // The program is wrapped in a block exactly as Foundry wraps a script macro's command, so learner code may
+  // shadow globals with const/let (e.g. `const CONFIG = {...}`) without a redeclaration error.
+  let trailer = "";
   if ( collect.length ) {
-    body += `\n;return { __academyFns: { ${collect.map(n => `${JSON.stringify(n)}: (typeof ${n} === "undefined" ? undefined : ${n})`).join(", ")} } };`;
+    trailer = `\n;return { __academyFns: { ${collect.map(n => `${JSON.stringify(n)}: (typeof ${n} === "undefined" ? undefined : ${n})`).join(", ")} } };`;
   }
-  return new AsyncFunction(...globalNames, body);
+  return new AsyncFunction(...globalNames, `{\n${code}\n${trailer}\n}`);
 }
 
 /**

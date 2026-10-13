@@ -218,6 +218,10 @@ function evaluateTest(tc, index, run, code) {
       const text = msgs.map(m => stripTags(m.content)).join("\n");
       if ( !new RegExp(spec.matches, spec.flags ?? "m").test(text) ) return fail(`Chat text did not match /${spec.matches}/. Messages: ${text || "(none)"}`);
     }
+    if ( spec.html !== undefined ) {
+      const raw = msgs.map(m => String(m.content)).join("\n");
+      if ( !new RegExp(spec.html, spec.flags ?? "m").test(raw) ) return fail(`Chat HTML did not match /${spec.html}/. HTML was: ${raw.slice(0, 300) || "(none)"}`);
+    }
     if ( spec.whisperToGM && !msgs.some(m => Array.isArray(m.whisper) && m.whisper.length) ) return fail("The message should be whispered to the GM (set the whisper option)");
     if ( spec.speakerAlias && !msgs.some(m => m.speaker?.alias === spec.speakerAlias) ) return fail(`Expected a message spoken as "${spec.speakerAlias}"`);
     return pass("Chat output is as expected");
@@ -277,7 +281,9 @@ function evaluateTest(tc, index, run, code) {
   return fail("Unknown test kind");
 }
 
-function stripTags(html) { return String(html ?? "").replace(/<[^>]*>/g, ""); }
+const ENTITIES = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": "\"", "&#39;": "'", "&#x27;": "'", "&nbsp;": " " };
+/** Text content of chat HTML: tags removed and the common entities decoded, so tests can match what a reader sees. */
+function stripTags(html) { return String(html ?? "").replace(/<[^>]*>/g, "").replace(/&(amp|lt|gt|quot|#39|#x27|nbsp);/g, m => ENTITIES[m] ?? m); }
 
 function fmtArgs(args=[]) { return args.map(fmt).join(", "); }
 
