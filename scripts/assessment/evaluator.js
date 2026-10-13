@@ -171,7 +171,8 @@ function evaluateTest(tc, index, run, code) {
     }
     if ( "expectMatches" in tc ) {
       const re = new RegExp(tc.expectMatches, tc.flags ?? "");
-      return re.test(String(cr.result)) ? pass(`Returns ${fmt(cr.result)}`) : fail(`${tc.call}(${fmtArgs(tc.args)}) returned ${fmt(cr.result)}, which does not match /${tc.expectMatches}/`);
+      const text = typeof cr.result === "string" ? cr.result : fmt(cr.result);
+      return re.test(text) ? pass(`Returns ${fmt(cr.result)}`) : fail(`${tc.call}(${fmtArgs(tc.args)}) returned ${fmt(cr.result)}, which does not match /${tc.expectMatches}/`);
     }
     return deepEqual(cr.result, tc.expect) ? pass(`${tc.call}(${fmtArgs(tc.args)}) → ${fmt(cr.result)}`) : fail(`${tc.call}(${fmtArgs(tc.args)}) returned ${fmt(cr.result)} but ${fmt(tc.expect)} was expected`);
   }

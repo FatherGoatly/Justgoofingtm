@@ -236,7 +236,7 @@ export function validateExercise(e, p, c, ids, lesson) {
   if ( !isString(e.id) || !ID_RE.test(e.id) ) c.err(`${p}.id`, "kebab-case id required");
   else if ( ids.has(e.id) ) c.err(`${p}.id`, `duplicate exercise id "${e.id}"`);
   else ids.add(e.id);
-  if ( lesson?.id && isString(e.id) && !e.id.startsWith(`${lesson.id}-`) ) c.err(`${p}.id`, `exercise ids must be prefixed with the lesson id ("${lesson.id}-")`);
+  if ( lesson?.id && isString(e.id) && !e.id.startsWith(`${String(lesson.id).split("-")[0]}-`) ) c.err(`${p}.id`, `exercise ids must start with the lesson's tier prefix ("${String(lesson.id).split("-")[0]}-")`);
   if ( !EXERCISE_TYPES.includes(e.type) ) { c.err(`${p}.type`, `unknown exercise type "${e.type}"`); return; }
   if ( !isString(e.title) ) c.err(`${p}.title`, "title required");
   if ( !isString(e.prompt) ) c.err(`${p}.prompt`, "prompt required");
