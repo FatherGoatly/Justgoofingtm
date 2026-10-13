@@ -44,6 +44,8 @@ function sandboxGlobals() {
     print: () => { throw new Error("print() is not a JavaScript function. Use console.log(...) to display a value."); },
     // Explicitly block a few things that would confuse beginners inside a worker.
     alert: () => { throw new Error("alert() is a browser pop-up and is not available in Foundry macros. Use ui.notifications.info(...) or ChatMessage.create(...) instead."); },
-    document: undefined, window: undefined, localStorage: undefined, fetch: undefined, XMLHttpRequest: undefined, importScripts: undefined, WebSocket: undefined, Worker: undefined, self: undefined, globalThis: undefined
+    // `globalThis` is a fresh, empty object per run: macros commonly stash state on it, and this keeps that
+    // state away from the worker's real global object.
+    document: undefined, window: undefined, localStorage: undefined, fetch: undefined, XMLHttpRequest: undefined, importScripts: undefined, WebSocket: undefined, Worker: undefined, self: undefined, globalThis: {}
   };
 }

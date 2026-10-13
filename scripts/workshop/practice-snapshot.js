@@ -80,9 +80,11 @@ export const PRACTICE_TOKENS = [
  * @returns {object}
  */
 export function createPracticeSnapshot({ system="dnd5e", combat=true, gm=true }={}) {
-  const user = { id: "usrAcademyGM001", name: gm ? "Gamemaster" : "Player One", role: gm ? 4 : 1, isGM: gm, color: "#ff8800", character: gm ? null : "acaReginald01" };
-  const users = [user, { id: "usrPlayerTwo001", name: "Player Two", role: 1, isGM: false, color: "#44aaff", character: "acaMirabel0002" }];
-  if ( gm ) users.push({ id: "usrPlayerOne001", name: "Player One", role: 1, isGM: false, color: "#44ff88", character: "acaReginald01" });
+  const gmUser = { id: "usrAcademyGM001", name: "Gamemaster", role: 4, isGM: true, color: "#ff8800", character: null };
+  const playerOne = { id: "usrPlayerOne001", name: "Player One", role: 1, isGM: false, color: "#44ff88", character: "acaReginald01" };
+  const playerTwo = { id: "usrPlayerTwo001", name: "Player Two", role: 1, isGM: false, color: "#44aaff", character: "acaMirabel0002" };
+  const user = gm ? gmUser : playerOne;
+  const users = [gmUser, playerOne, playerTwo];
   return {
     kind: "practice",
     createdAt: 0,
