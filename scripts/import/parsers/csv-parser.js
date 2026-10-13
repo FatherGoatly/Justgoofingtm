@@ -1,4 +1,3 @@
-import { createItem } from "../schema.js";
 import { parseCSV } from "./markup.js";
 import { parseItemBlock } from "./item-parser.js";
 
@@ -37,5 +36,5 @@ export function parseCSVItems(text) {
     }
   }
   if ( !entries.length ) warnings.push("No rows could be converted. See docs/supported-formats.md for the CSV layout.");
-  return { entries, warnings, note: createItem ? undefined : undefined };
+  return { entries, warnings };
 }

@@ -194,7 +194,7 @@ export async function importBundle(bundle, options={}) {
       report.warnings.push(...p.warnings.map(w => `${p.data.name}: ${w}`));
       report.placeholders.push(...(p.placeholders ?? []));
       const data = permissions.sanitizeOwnership(p.data, user);
-      if ( folder && destination.type !== DESTINATION.ACTOR ) data.folder = folder.id;
+      if ( folder && destination.type !== DESTINATION.ACTOR ) { const fid = folder.get(p.entry.kind === "actor" ? "Actor" : "Item"); if ( fid ) data.folder = fid; }
       if ( destination.type === DESTINATION.STAGING ) foundry.utils.setProperty(data, `flags.${FLAG_SCOPE}.${FLAGS.STAGING}`, true);
       const dupPolicy = p.duplicate?.policy;
       if ( dupPolicy === DUPLICATE_POLICY.SKIP ) { report.skipped.push({ name: data.name, reason: "duplicate" }); continue; }
@@ -250,8 +250,9 @@ export async function importBundle(bundle, options={}) {
         const specs = runtime.mechanicsOf(doc);
         for ( const spec of specs ) {
           if ( spec.implementation?.owner !== "macro" || spec.enabled === false ) continue;
+          const existed = Boolean(macroGenerator.findExisting(spec.id));
           const macro = await macroGenerator.ensureMacro(spec, { itemUuid: doc.uuid, itemName: doc.name }, { user, img: doc.img });
-          if ( macro ) { if ( !macro._sbiExisting ) tx.trackCreated("Macro", macro); report.macros.push({ name: macro.name, uuid: macro.uuid, mechanic: spec.label }); }
+          if ( macro ) { if ( !existed ) tx.trackCreated("Macro", macro); report.macros.push({ name: macro.name, uuid: macro.uuid, mechanic: spec.label }); }
         }
       }
     }
@@ -317,7 +318,7 @@ async function resolveFolder(destination, user, log) {
     if ( !f && permissions.isGM(user) ) { try { f = await FolderCls.create({ name, type: t }); } catch (err) { log.warn(`Could not create folder ${name}: ${err.message}`); } }
     folders[t] = f ?? null;
   }
-  return { id: null, byType: folders, get(t) { return folders[t]?.id ?? null; } , type };
+  return { byType: folders, get(t) { return folders[t]?.id ?? null; }, type };
 }
 
 export { prepareImport as prepare };

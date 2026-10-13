@@ -119,12 +119,14 @@ export function maxBatchFor(user = currentUser()) {
  * @param {object} [user]
  * @returns {object}
  */
-export function sanitizeOwnership(data, user = currentUser()) {
+export function sanitizeOwnership(data, user = currentUser(), { nested=false }={}) {
   if ( !data || typeof data !== "object" ) return data;
   const out = { ...data };
   delete out.ownership;
   delete out.permission;
-  delete out._id;
+  // Top-level documents never carry an id from the source; embedded effects keep theirs because
+  // activities reference them by `_id`.
+  if ( !nested ) delete out._id;
   if ( out.flags ) {
     const flags = { ...out.flags };
     // Only keep our own flags and the core/dnd5e flags known to be harmless data.
@@ -142,6 +144,6 @@ export function sanitizeOwnership(data, user = currentUser()) {
   delete out.folder;
   delete out.sort;
   if ( Array.isArray(out.items) ) out.items = out.items.map(i => sanitizeOwnership(i, user));
-  if ( Array.isArray(out.effects) ) out.effects = out.effects.map(e => sanitizeOwnership(e, user));
+  if ( Array.isArray(out.effects) ) out.effects = out.effects.map(e => sanitizeOwnership(e, user, { nested: true }));
   return out;
 }

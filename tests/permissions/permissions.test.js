@@ -139,3 +139,15 @@ describe("importer (scenario 5 & 7)", () => {
     expect(deleted).toEqual(["Flame Tongue"]);
   });
 });
+
+describe("embedded effect ids survive sanitizing", () => {
+  it("keeps effect _id so activity references stay valid", async () => {
+    const { buildItem } = await import("../../scripts/documents/item-builder.js");
+    const ir = runPipeline("Horn of Fear\nWondrous item, rare\nYou can use an action to blow the horn. Each creature within 30 feet of you must succeed on a DC 15 Wisdom saving throw or be frightened for 1 minute.").entries[0];
+    const { data } = buildItem(ir);
+    const clean = permissions.sanitizeOwnership(data, { id: "u", isGM: false });
+    const save = Object.values(clean.system.activities).find(a => a.type === "save");
+    expect(clean._id).toBeUndefined();
+    expect(clean.effects[0]._id).toBe(save.effects[0]._id);
+  });
+});
