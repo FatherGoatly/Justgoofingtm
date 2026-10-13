@@ -1,0 +1,16 @@
+<header class="workshop-header">
+  <div class="workshop-title">
+    <h2>{{title}} <span class="dirty-indicator" {{#unless dirty}}hidden{{/unless}} title="{{localize "GMMA.Workshop.Unsaved"}}">●</span></h2>
+    <p class="hint">{{subtitle}}{{#if draftName}} · <i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> {{draftName}}{{/if}}{{#if lessonId}} · <button type="button" class="link-button" data-action="openLesson" data-lesson-id="{{lessonId}}">{{localize "GMMA.Workshop.OpenLesson"}}</button>{{/if}}</p>
+  </div>
+  <div class="runtime-switch" role="radiogroup" aria-label="{{localize "GMMA.Workshop.Runtime"}}">
+    {{#each runtimes}}
+    <button type="button" class="runtime-button runtime-{{id}} {{#if active}}active{{/if}}" role="radio" aria-checked="{{#if active}}true{{else}}false{{/if}}" data-action="setRuntime" data-runtime="{{id}}" title="{{hint}}" {{#if disabled}}disabled{{/if}}><i class="fa-solid {{icon}}" aria-hidden="true"></i> {{label}}</button>
+    {{/each}}
+  </div>
+  <div class="run-controls">
+    {{#if isPreview}}{{#unless snapshotLocked}}<div class="snapshot-switch" role="radiogroup" aria-label="{{localize "GMMA.Workshop.SnapshotSource"}}"><button type="button" class="chip {{#if (eq snapshotSource "practice")}}active{{/if}}" role="radio" aria-checked="{{#if (eq snapshotSource "practice")}}true{{else}}false{{/if}}" data-action="setSnapshot" data-snapshot="practice">{{localize "GMMA.Workshop.PracticeSnapshot"}}</button><button type="button" class="chip {{#if (eq snapshotSource "live")}}active{{/if}}" role="radio" aria-checked="{{#if (eq snapshotSource "live")}}true{{else}}false{{/if}}" data-action="setSnapshot" data-snapshot="live">{{localize "GMMA.Workshop.LiveSnapshot"}}</button></div>{{/unless}}{{/if}}
+    {{#if running}}<button type="button" class="secondary-button" data-action="cancelRun"><i class="fa-solid fa-stop" aria-hidden="true"></i> {{localize "GMMA.Workshop.Stop"}}</button>{{else}}<button type="button" class="primary-button run-button {{#if isLive}}live{{/if}}" data-action="run"><i class="fa-solid {{#if isLive}}fa-bolt{{else}}fa-play{{/if}}" aria-hidden="true"></i> {{#if isLive}}{{localize "GMMA.Workshop.RunLive"}}{{else}}{{localize "GMMA.Workshop.Run"}}{{/if}}</button>{{/if}}
+  </div>
+  {{#if isLive}}<p class="live-banner" role="alert"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{localize "GMMA.Workshop.LiveBanner"}}</p>{{/if}}
+</header>

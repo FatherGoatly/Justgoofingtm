@@ -1,0 +1,47 @@
+<div class="view debug-view">
+  <header class="view-header"><h2>{{localize "GMMA.Debug.Title"}}</h2><p class="view-lead">{{localize "GMMA.Debug.Lead"}}</p></header>
+  <div class="debug-grid">
+    <section class="card card-broken" aria-labelledby="broken-heading">
+      <h3 id="broken-heading"><i class="fa-solid fa-bug" aria-hidden="true"></i> {{localize "GMMA.Debug.BrokenLibrary"}}</h3>
+      <p class="hint">{{localize "GMMA.Debug.BrokenLead"}}</p>
+      <ul class="broken-list">{{#each broken}}<li><button type="button" class="link-button {{#if selected}}active{{/if}}" data-action="openBroken" data-broken-id="{{id}}">{{#if passed}}<i class="fa-solid fa-circle-check" aria-hidden="true"></i> {{/if}}{{title}}</button> <span class="hint">{{category}} · {{difficulty}}</span></li>{{/each}}</ul>
+      {{{selectedHtml}}}
+    </section>
+    <section class="card card-explainer" aria-labelledby="explainer-heading">
+      <h3 id="explainer-heading"><i class="fa-solid fa-comment-medical" aria-hidden="true"></i> {{localize "GMMA.Debug.Explainer"}}</h3>
+      <p class="hint">{{localize "GMMA.Debug.ExplainerLead"}}</p>
+      <label class="field"><span>{{localize "GMMA.Debug.ErrorText"}}</span><textarea name="error-text" rows="3" spellcheck="false" placeholder="TypeError: Cannot read properties of undefined (reading 'actor')">{{errorText}}</textarea></label>
+      <button type="button" class="secondary-button" data-action="explainError"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> {{localize "GMMA.Debug.Explain"}}</button>
+      {{#if explanation}}
+      <div class="error-explanation {{#if explanation.confirmed}}confirmed{{else}}guess{{/if}}">
+        <p class="explanation-title"><strong>{{explanation.title}}</strong> <span class="confidence">{{#if explanation.confirmed}}{{localize "GMMA.Debug.Recognised"}}{{else}}{{localize "GMMA.Debug.General"}}{{/if}}</span></p>
+        <p>{{explanation.explanation}}</p>
+        <p><strong>{{localize "GMMA.Debug.Causes"}}</strong></p><ul>{{#each explanation.causes}}<li>{{this}}</li>{{/each}}</ul>
+        <p><strong>{{localize "GMMA.Debug.Investigate"}}</strong></p><ul>{{#each explanation.investigate}}<li>{{this}}</li>{{/each}}</ul>
+        {{#if explanation.lessonId}}<p><a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{explanation.lessonId}}">{{localize "GMMA.Debug.RelatedLesson"}}</a></p>{{/if}}
+      </div>
+      {{/if}}
+    </section>
+    <section class="card card-inspector" aria-labelledby="inspector-heading">
+      <h3 id="inspector-heading"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> {{localize "GMMA.Debug.Inspector"}}</h3>
+      <p class="hint">{{localize "GMMA.Debug.InspectorLead"}}</p>
+      <div class="inspector-controls">
+        <label class="field"><span>{{localize "GMMA.Debug.InspectTarget"}}</span><select name="inspect-target">{{#each inspectTargets}}<option value="{{id}}">{{label}}</option>{{/each}}</select></label>
+        <label class="field"><span>{{localize "GMMA.Debug.InspectPath"}}</span><input type="text" name="inspect-path" placeholder="system.attributes.hp" autocomplete="off" spellcheck="false"></label>
+        <button type="button" class="secondary-button" data-action="inspectSelection"><i class="fa-solid fa-eye" aria-hidden="true"></i> {{localize "GMMA.Debug.Inspect"}}</button>
+      </div>
+      <div class="inspector-output">{{{inspectHtml}}}</div>
+    </section>
+    <section class="card card-hooks" aria-labelledby="hooks-heading">
+      <h3 id="hooks-heading"><i class="fa-solid fa-satellite-dish" aria-hidden="true"></i> {{localize "GMMA.Debug.Hooks"}}</h3>
+      <p class="hint">{{localize "GMMA.Debug.HooksLead"}}</p>
+      <fieldset class="hook-choices"><legend>{{localize "GMMA.Debug.HookList"}}</legend>{{#each hooks}}<label class="choice inline"><input type="checkbox" name="hook" value="{{name}}" {{#if watched}}checked{{/if}}> <code>{{name}}</code></label>{{/each}}</fieldset>
+      <div class="hook-toolbar">
+        {{#if monitorActive}}<button type="button" class="secondary-button" data-action="stopHooks"><i class="fa-solid fa-stop" aria-hidden="true"></i> {{localize "GMMA.Debug.StopHooks"}}</button>{{else}}<button type="button" class="primary-button" data-action="startHooks"><i class="fa-solid fa-play" aria-hidden="true"></i> {{localize "GMMA.Debug.StartHooks"}}</button>{{/if}}
+        <button type="button" class="secondary-button" data-action="clearHooks"><i class="fa-solid fa-eraser" aria-hidden="true"></i> {{localize "GMMA.Debug.ClearHooks"}}</button>
+        <span class="hint">{{#if monitorActive}}{{localize "GMMA.Debug.Watching"}}{{else}}{{localize "GMMA.Debug.NotWatching"}}{{/if}}</span>
+      </div>
+      <ul class="hook-log" aria-live="polite">{{#each events}}<li><span class="hook-time">{{time}}</span> <code>{{name}}</code> <span class="hook-args">{{summary}}</span></li>{{else}}<li class="hint">{{localize "GMMA.Debug.NoEvents"}}</li>{{/each}}</ul>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<nav class="academy-nav" aria-label="{{localize "GMMA.Nav.Label"}}">
+  <div class="nav-brand">
+    <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+    <span class="brand-text">{{localize "GMMA.ShortTitle"}}</span>
+  </div>
+  <ul class="nav-list" role="list">
+    {{#each nav}}
+    <li>
+      <button type="button" class="nav-item {{#if active}}active{{/if}}" data-action="navigate" data-view="{{id}}" {{#if active}}aria-current="page"{{/if}} {{#if disabled}}disabled{{/if}}>
+        <i class="fa-solid {{icon}}" aria-hidden="true"></i><span class="nav-label">{{label}}</span>
+      </button>
+    </li>
+    {{/each}}
+  </ul>
+  <div class="nav-footer">
+    <button type="button" class="nav-item" data-action="openWorkshop" data-runtime="sandbox"><i class="fa-solid fa-flask" aria-hidden="true"></i><span class="nav-label">{{localize "GMMA.Nav.Workshop"}}</span></button>
+    <div class="mode-switch" role="group" aria-label="{{localize "GMMA.Mode.Label"}}">
+      {{#each modes}}
+      <button type="button" class="mode-button {{#if (eq this ../mode)}}active{{/if}}" data-action="setMode" data-mode="{{this}}" title="{{localize (concat "GMMA.Mode.Hint." this)}}" aria-pressed="{{#if (eq this ../mode)}}true{{else}}false{{/if}}">{{localize (concat "GMMA.Mode." this)}}</button>
+      {{/each}}
+    </div>
+    <button type="button" class="nav-item subtle" data-action="openSettings"><i class="fa-solid fa-gear" aria-hidden="true"></i><span class="nav-label">{{localize "GMMA.Nav.Settings"}}</span></button>
+  </div>
+</nav>

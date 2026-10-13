@@ -1,0 +1,35 @@
+{
+  "id": "gm-macro-academy",
+  "title": "The Game Master's Macro Academy",
+  "description": "An interactive programming course inside Foundry VTT. Start with zero coding experience and progress through guided lessons, a safe code workshop, a Foundry dry-run emulator, debugging labs and independent capstone projects until you can design and build your own macros and modules.",
+  "version": "1.0.0",
+  "authors": [
+    { "name": "Niles Goatly" }
+  ],
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14.369",
+    "maximum": "14"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": { "minimum": "6.0.0", "verified": "6.0.6" }
+      }
+    ]
+  },
+  "esmodules": ["scripts/main.js"],
+  "styles": ["styles/academy.css", "styles/lessons.css", "styles/workshop.css"],
+  "languages": [
+    { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
+  "socket": false,
+  "url": "https://github.com/FatherGoatly/Justgoofingtm",
+  "manifest": "https://github.com/FatherGoatly/Justgoofingtm/releases/latest/download/module.json",
+  "download": "https://github.com/FatherGoatly/Justgoofingtm/releases/latest/download/gm-macro-academy.zip",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "changelog": "CHANGELOG.md"
+}

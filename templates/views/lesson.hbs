@@ -1,0 +1,51 @@
+<div class="view lesson-view">
+{{#if lesson}}
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar" aria-label="{{localize "GMMA.Lesson.SectionNav"}}">
+      <div class="lesson-toolbar">
+        <button type="button" class="secondary-button" data-action="navigate" data-view="curriculum"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> {{localize "GMMA.Lesson.Back"}}</button>
+        <button type="button" class="icon-button" data-action="toggleBookmark" data-lesson-id="{{lesson.id}}" aria-label="{{localize "GMMA.Lesson.Bookmark"}}" aria-pressed="{{#if lesson.bookmarked}}true{{else}}false{{/if}}"><i class="{{#if lesson.bookmarked}}fa-solid{{else}}fa-regular{{/if}} fa-bookmark" aria-hidden="true"></i></button>
+      </div>
+      <nav class="section-nav"><h4>{{localize "GMMA.Lesson.Contents"}}</h4><ol>{{#each navItems}}<li><button type="button" class="link-button" data-action="jumpSection" data-section="{{id}}"><span class="nav-kind">{{label}}</span></button></li>{{/each}}<li><button type="button" class="link-button" data-action="jumpSection" data-section="exercises">{{localize "GMMA.Lesson.Exercises"}}</button></li><li><button type="button" class="link-button" data-action="jumpSection" data-section="checkpoint">{{localize "GMMA.Lesson.Checkpoint"}}</button></li><li><button type="button" class="link-button" data-action="jumpSection" data-section="challenge">{{localize "GMMA.Lesson.Challenge"}}</button></li></ol></nav>
+      <section class="completion-panel" aria-labelledby="completion-heading">
+        <h4 id="completion-heading">{{localize "GMMA.Lesson.Completion"}}</h4>
+        <p class="lesson-state state-{{completion.state}}" title="{{completion.stateDescription}}">{{completion.stateLabel}}</p>
+        <ul class="requirement-list">
+          {{#each completion.required}}<li class="{{#if passed}}met{{else}}unmet{{/if}}"><i class="fa-solid {{#if passed}}fa-circle-check{{else}}fa-circle{{/if}}" aria-hidden="true"></i> {{title}} <span class="hint">({{type}}{{#if assisted}}, {{localize "GMMA.Lesson.Assisted"}}{{/if}})</span></li>{{/each}}
+          {{#if completion.checkpoint}}<li class="{{#if completion.checkpointPassed}}met{{else}}unmet{{/if}}"><i class="fa-solid {{#if completion.checkpointPassed}}fa-circle-check{{else}}fa-circle{{/if}}" aria-hidden="true"></i> {{localize "GMMA.Lesson.Checkpoint"}}{{#unless completion.requireAssessment}} <span class="hint">({{localize "GMMA.Lesson.CheckpointOptional"}})</span>{{/unless}}</li>{{/if}}
+        </ul>
+        <p class="hint">{{completion.criterion}}</p>
+      </section>
+      {{#if terms.length}}
+      <section class="terms-panel"><h4>{{localize "GMMA.Lesson.Terms"}}</h4><ul>{{#each terms}}<li><a class="academy-link glossary-link" data-action="openTerm" data-term="{{slug}}">{{term}}</a></li>{{/each}}</ul></section>
+      {{/if}}
+    </aside>
+    <article class="lesson-article">
+      {{#if lesson.locked}}<aside class="callout callout-warning" role="note"><div class="callout-title"><i class="fa-solid fa-lock" aria-hidden="true"></i> {{localize "GMMA.Lesson.LockedTitle"}}</div><div class="callout-body">{{localize "GMMA.Lesson.LockedBody"}} {{#each lesson.missing}}<a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a>{{#unless @last}}, {{/unless}}{{/each}}</div></aside>{{/if}}
+      {{{headerHtml}}}
+      {{{requirementsHtml}}}
+      {{#if reinforcesHtml}}<section class="lesson-section section-reinforces"><h3><span class="section-kind">{{localize "GMMA.Lesson.Reinforces"}}</span></h3>{{{reinforcesHtml}}}</section>{{/if}}
+      {{{sectionsHtml}}}
+      <section class="lesson-section section-exercises" id="exercises" aria-labelledby="exercises-heading"><h3 id="exercises-heading"><span class="section-kind">{{localize "GMMA.Lesson.Exercises"}}</span> <span class="section-title">{{localize "GMMA.Lesson.ExercisesTitle"}}</span></h3>{{{exercisesHtml}}}</section>
+      {{{checkpointHtml}}}
+      <section class="lesson-section section-challenge" id="challenge" aria-labelledby="challenge-heading"><h3 id="challenge-heading"><span class="section-kind">{{localize "GMMA.Lesson.Challenge"}}</span> <span class="section-title">{{localize "GMMA.Lesson.ChallengeTitle"}}</span></h3>{{{challengeHtml}}}</section>
+      <section class="lesson-section section-related" aria-labelledby="related-heading">
+        <h3 id="related-heading"><span class="section-kind">{{localize "GMMA.Lesson.Related"}}</span></h3>
+        <div class="related-grid">
+          {{#if related.prerequisites.length}}<div><h4>{{localize "GMMA.Lesson.Prerequisites"}}</h4><ul>{{#each related.prerequisites}}<li><a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a> <span class="lesson-state state-{{state}}">{{stateLabel}}</span></li>{{/each}}</ul></div>{{/if}}
+          {{#if related.dependents.length}}<div><h4>{{localize "GMMA.Lesson.Unlocks"}}</h4><ul>{{#each related.dependents}}<li><a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a></li>{{/each}}</ul></div>{{/if}}
+          {{#if related.sameTopic.length}}<div><h4>{{localize "GMMA.Lesson.SameTopic"}}</h4><ul>{{#each related.sameTopic}}<li><a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a></li>{{/each}}</ul></div>{{/if}}
+        </div>
+        {{#if documentationHtml}}<h4>{{localize "GMMA.Lesson.FurtherReading"}}</h4><p class="hint">{{localize "GMMA.Lesson.ExternalLinks"}}</p>{{{documentationHtml}}}{{/if}}
+      </section>
+      <footer class="lesson-footer">
+        {{#if nextLesson}}<button type="button" class="primary-button" data-action="openLesson" data-lesson-id="{{nextLesson.id}}">{{localize "GMMA.Lesson.Next"}}: {{nextLesson.title}} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>{{/if}}
+        <button type="button" class="secondary-button" data-action="navigate" data-view="curriculum"><i class="fa-solid fa-sitemap" aria-hidden="true"></i> {{localize "GMMA.Nav.Curriculum"}}</button>
+      </footer>
+    </article>
+  </div>
+{{else}}
+  <header class="view-header"><h2>{{localize "GMMA.Lesson.None"}}</h2><p class="view-lead">{{#if missingLesson}}{{localize "GMMA.Lesson.Missing"}} <code>{{missingLesson}}</code>.{{else}}{{localize "GMMA.Lesson.PickOne"}}{{/if}}</p></header>
+  <button type="button" class="primary-button" data-action="navigate" data-view="curriculum"><i class="fa-solid fa-sitemap" aria-hidden="true"></i> {{localize "GMMA.Nav.Curriculum"}}</button>
+{{/if}}
+</div>

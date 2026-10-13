@@ -1,0 +1,14 @@
+<div class="view glossary">
+  <header class="view-header"><h2>{{localize "GMMA.Glossary.Title"}}</h2><p class="view-lead">{{localize "GMMA.Glossary.Lead"}}</p></header>
+  <div class="glossary-layout">
+    <aside class="glossary-list-pane">
+      <label class="field"><span>{{localize "GMMA.Glossary.Search"}}</span><input type="search" name="glossary-search" value="{{filter.text}}" placeholder="{{localize "GMMA.Glossary.SearchPlaceholder"}}" autocomplete="off"></label>
+      <label class="field"><span>{{localize "GMMA.Glossary.Tag"}}</span><select name="glossary-tag"><option value="">{{localize "GMMA.Glossary.AllTags"}}</option>{{#each tags}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{id}}</option>{{/each}}</select></label>
+      <p class="hint">{{count}} / {{total}} {{localize "GMMA.Glossary.Terms"}}</p>
+      <div class="glossary-groups">
+        {{#each groups}}<section class="glossary-group"><h4>{{letter}}</h4><ul>{{#each items}}<li><button type="button" class="link-button term-button {{#if active}}active{{/if}}" data-action="openTerm" data-term="{{slug}}" {{#if active}}aria-current="true"{{/if}}>{{term}}</button></li>{{/each}}</ul></section>{{/each}}
+      </div>
+    </aside>
+    <div class="glossary-detail">{{#if selectedHtml}}{{{selectedHtml}}}{{else}}<p class="hint">{{localize "GMMA.Glossary.PickTerm"}}</p>{{/if}}</div>
+  </div>
+</div>

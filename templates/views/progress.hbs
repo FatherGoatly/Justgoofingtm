@@ -1,0 +1,25 @@
+<div class="view progress-view">
+  <header class="view-header"><h2>{{localize "GMMA.Progress.Title"}}</h2><p class="view-lead">{{localize "GMMA.Progress.Lead"}}</p></header>
+  <div class="progress-toolbar">
+    <button type="button" class="secondary-button" data-action="exportProgress"><i class="fa-solid fa-file-export" aria-hidden="true"></i> {{localize "GMMA.Progress.Export"}}</button>
+    <button type="button" class="secondary-button" data-action="importProgress"><i class="fa-solid fa-file-import" aria-hidden="true"></i> {{localize "GMMA.Progress.Import"}}</button>
+    <button type="button" class="secondary-button danger" data-action="resetProgress"><i class="fa-solid fa-trash" aria-hidden="true"></i> {{localize "GMMA.Progress.Reset"}}</button>
+    <span class="hint">{{localize "GMMA.Progress.StorageNote"}} {{drafts.count}} {{localize "GMMA.Progress.Drafts"}}.</span>
+  </div>
+  {{#if report.reconciliation.unknownLessons.length}}<aside class="callout callout-note" role="note"><div class="callout-title">{{localize "GMMA.Progress.UnknownLessons"}}</div><div class="callout-body">{{report.reconciliation.unknownLessons}}</div></aside>{{/if}}
+  <section class="card"><h3>{{localize "GMMA.Progress.Overall"}}</h3><p><strong>{{overall.completed}}</strong> / {{overall.total}} {{localize "GMMA.Dashboard.LessonsComplete"}} ({{overall.percent}}%), {{overall.independent}} {{localize "GMMA.Dashboard.Independent"}}. {{stats.runs}} {{localize "GMMA.Progress.Runs"}}, {{stats.liveRuns}} {{localize "GMMA.Progress.LiveRuns"}}, {{stats.hintsUsed}} {{localize "GMMA.Progress.Hints"}}, {{stats.solutionsRevealed}} {{localize "GMMA.Progress.Solutions"}}.</p></section>
+  <section class="card"><h3>{{localize "GMMA.Progress.Tiers"}}</h3>
+    {{#each tiers}}
+    <details class="tier-progress-block" {{#if (lt mastery.completed mastery.total)}}{{#if mastery.completed}}open{{/if}}{{/if}}>
+      <summary><span class="tier-number">Tier {{number}}</span> {{title}} <span class="tier-progress"><span class="bar" style="--percent: {{mastery.percent}};"></span> {{mastery.completed}}/{{mastery.total}}{{#if mastery.mastered}} · <i class="fa-solid fa-medal" aria-hidden="true"></i> {{localize "GMMA.Curriculum.Mastered"}}{{/if}}</span></summary>
+      <ul class="requirement-list">{{#each mastery.requirements}}<li class="{{#if met}}met{{else}}unmet{{/if}}"><i class="fa-solid {{#if met}}fa-circle-check{{else}}fa-circle{{/if}}" aria-hidden="true"></i> {{text}}</li>{{/each}}</ul>
+      <ul class="lesson-list compact">{{#each lessons}}<li class="lesson-card compact"><a class="lesson-card-title academy-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a><span class="lesson-state state-{{state}}" title="{{stateDescription}}">{{stateLabel}}</span></li>{{/each}}</ul>
+    </details>
+    {{/each}}
+  </section>
+  <section class="card"><h3>{{localize "GMMA.Progress.States"}}</h3><dl class="state-legend">{{#each states}}<dt><span class="lesson-state state-{{id}}">{{label}}</span></dt><dd>{{description}}</dd>{{/each}}</dl></section>
+  <section class="card"><h3>{{localize "GMMA.Dashboard.Achievements"}}</h3><ul class="achievement-grid">{{#each achievements}}<li class="achievement {{#if earned}}earned{{else}}locked{{/if}}"><i class="fa-solid {{icon}}" aria-hidden="true"></i><div><strong>{{title}}</strong><span class="hint">{{description}}</span>{{#if when}}<span class="hint">{{localize "GMMA.Progress.EarnedOn"}} {{when}}</span>{{/if}}</div></li>{{/each}}</ul></section>
+  <section class="card"><h3>{{localize "GMMA.Dashboard.Review"}}</h3>{{#if review.length}}<ul class="review-list">{{#each review}}<li><strong>{{concept}}</strong>: {{reason}}<br>{{localize "GMMA.Progress.ReviewLessons"}}: {{#each lessons}}<a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a>{{#unless @last}}, {{/unless}}{{/each}}{{#if practice.length}}<br>{{localize "GMMA.Progress.Practice"}}: {{#each practice}}<a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{lessonId}}">{{title}}</a>{{#unless @last}}, {{/unless}}{{/each}}{{/if}}</li>{{/each}}</ul>{{else}}<p class="hint">{{localize "GMMA.Progress.NoReview"}}</p>{{/if}}</section>
+  <section class="card"><h3>{{localize "GMMA.Progress.Bookmarks"}}</h3>{{#if bookmarks.length}}<ul>{{#each bookmarks}}<li><a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a></li>{{/each}}</ul>{{else}}<p class="hint">{{localize "GMMA.Progress.NoBookmarks"}}</p>{{/if}}</section>
+  <section class="card"><h3>{{localize "GMMA.Dashboard.Projects"}}</h3>{{#if projects.length}}<ul class="project-list">{{#each projects}}<li><strong>{{name}}</strong> <span class="project-status status-{{status}}">{{status}}</span> <span class="hint">{{when}}</span>{{#if description}}<br><span class="hint">{{description}}</span>{{/if}}</li>{{/each}}</ul>{{else}}<p class="hint">{{localize "GMMA.Progress.NoProjects"}}</p>{{/if}}</section>
+</div>

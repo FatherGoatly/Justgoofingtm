@@ -1,0 +1,30 @@
+<section class="workshop-editor" aria-label="{{localize "GMMA.Workshop.Editor"}}">
+  <div class="editor-toolbar">
+    <button type="button" class="icon-button" data-action="saveDraft" title="{{localize "GMMA.Workshop.Save"}}" aria-label="{{localize "GMMA.Workshop.Save"}}"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i></button>
+    <button type="button" class="icon-button" data-action="saveDraftAs" title="{{localize "GMMA.Workshop.SaveAs"}}" aria-label="{{localize "GMMA.Workshop.SaveAs"}}"><i class="fa-solid fa-file-circle-plus" aria-hidden="true"></i></button>
+    <button type="button" class="icon-button" data-action="resetStarter" title="{{localize "GMMA.Workshop.ResetStarter"}}" aria-label="{{localize "GMMA.Workshop.ResetStarter"}}"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i></button>
+    <span class="toolbar-sep" aria-hidden="true"></span>
+    <button type="button" class="icon-button" data-action="copyCode" title="{{localize "GMMA.Workshop.Copy"}}" aria-label="{{localize "GMMA.Workshop.Copy"}}"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+    <button type="button" class="icon-button" data-action="exportFile" title="{{localize "GMMA.Workshop.ExportFile"}}" aria-label="{{localize "GMMA.Workshop.ExportFile"}}"><i class="fa-solid fa-download" aria-hidden="true"></i></button>
+    <button type="button" class="icon-button" data-action="createMacro" title="{{#if macroAllowed}}{{localize "GMMA.Workshop.CreateMacro"}}{{else}}{{macroReason}}{{/if}}" aria-label="{{localize "GMMA.Workshop.CreateMacro"}}" {{#unless macroAllowed}}disabled{{/unless}}><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i></button>
+    <span class="toolbar-sep" aria-hidden="true"></span>
+    <button type="button" class="icon-button" data-action="fontSize" data-delta="-1" title="{{localize "GMMA.Workshop.Smaller"}}" aria-label="{{localize "GMMA.Workshop.Smaller"}}"><i class="fa-solid fa-magnifying-glass-minus" aria-hidden="true"></i></button>
+    <button type="button" class="icon-button" data-action="fontSize" data-delta="1" title="{{localize "GMMA.Workshop.Larger"}}" aria-label="{{localize "GMMA.Workshop.Larger"}}"><i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i></button>
+    <span class="toolbar-sep" aria-hidden="true"></span>
+    <label class="find-field"><span class="sr-only">{{localize "GMMA.Workshop.Find"}}</span><input type="search" name="editor-search" placeholder="{{localize "GMMA.Workshop.Find"}}" autocomplete="off"></label>
+    <span class="find-status hint" aria-live="polite"></span>
+  </div>
+  {{#if recovered}}
+  <div class="recover-banner" role="status"><i class="fa-solid fa-life-ring" aria-hidden="true"></i> {{localize "GMMA.Workshop.RecoverPrompt"}} ({{recovered.when}}) <button type="button" class="link-button" data-recover>{{localize "GMMA.Workshop.RecoverYes"}}</button> · <button type="button" class="link-button" data-dismiss-recover>{{localize "GMMA.Workshop.RecoverNo"}}</button></div>
+  {{/if}}
+  <div class="editor-host" style="--gmma-editor-font-size: {{fontSize}}px;">
+    {{#if codeMirror}}
+    <code-mirror name="code" language="javascript" indent="2" aria-label="{{localize "GMMA.Workshop.Editor"}}">{{code}}</code-mirror>
+    {{else}}
+    <textarea name="code" class="fallback-editor" spellcheck="false" autocomplete="off" autocapitalize="off" aria-label="{{localize "GMMA.Workshop.Editor"}}">{{code}}</textarea>
+    {{/if}}
+  </div>
+  {{#if isPreview}}
+  <details class="scripted-inputs"><summary>{{localize "GMMA.Workshop.ScriptedInputs"}}</summary><p class="hint">{{localize "GMMA.Workshop.ScriptedInputsHint"}}</p><textarea name="scripted-inputs" rows="2" spellcheck="false">{{inputs}}</textarea></details>
+  {{/if}}
+</section>

@@ -1,0 +1,78 @@
+<div class="view dashboard">
+  <header class="view-header">
+    <h2>{{localize "GMMA.Dashboard.Title"}}</h2>
+    <p class="view-lead">{{localize "GMMA.Dashboard.Lead"}}</p>
+  </header>
+  {{#if warnings.length}}
+  <aside class="callout callout-warning" role="note"><div class="callout-title"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> {{localize "GMMA.Dashboard.EnvironmentWarnings"}}</div><ul>{{#each warnings}}<li>{{this}}</li>{{/each}}</ul></aside>
+  {{/if}}
+  <div class="dashboard-grid">
+    <section class="card card-progress" aria-labelledby="dash-progress">
+      <h3 id="dash-progress"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Progress"}}</h3>
+      <div class="progress-ring" role="img" aria-label="{{overall.percent}}% complete" style="--percent: {{overall.percent}};"><span class="ring-value">{{overall.percent}}%</span></div>
+      <ul class="stat-list">
+        <li><strong>{{overall.completed}}</strong> / {{overall.total}} {{localize "GMMA.Dashboard.LessonsComplete"}}</li>
+        <li><strong>{{overall.independent}}</strong> {{localize "GMMA.Dashboard.Independent"}}</li>
+        <li><strong>{{overall.inProgress}}</strong> {{localize "GMMA.Dashboard.InProgress"}}</li>
+        <li><strong>{{stats.exercisesPassed}}</strong> {{localize "GMMA.Dashboard.ExercisesPassed"}}</li>
+        <li><strong>{{activeDays}}</strong> {{localize "GMMA.Dashboard.ActiveDays"}}</li>
+      </ul>
+      {{#if tier}}
+      <p class="current-tier"><span class="label">{{localize "GMMA.Dashboard.CurrentTier"}}</span> <strong>Tier {{tier.number}}: {{tier.title}}</strong><br><span class="hint">{{tier.objective}}</span></p>
+      {{#if mastery}}<ul class="requirement-list">{{#each mastery.requirements}}<li class="{{#if met}}met{{else}}unmet{{/if}}"><i class="fa-solid {{#if met}}fa-circle-check{{else}}fa-circle{{/if}}" aria-hidden="true"></i> {{text}}</li>{{/each}}</ul>{{/if}}
+      {{/if}}
+    </section>
+
+    <section class="card card-next" aria-labelledby="dash-next">
+      <h3 id="dash-next"><i class="fa-solid fa-forward" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Next"}}</h3>
+      {{#if last}}
+      <div class="lesson-card compact">
+        <div class="lesson-card-body"><span class="lesson-tier">Tier {{last.tier}}</span><strong class="lesson-card-title">{{last.title}}</strong><span class="lesson-state state-{{last.state}}">{{last.stateLabel}}</span></div>
+        <button type="button" class="primary-button" data-action="resume"><i class="fa-solid fa-play" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Resume"}}</button>
+      </div>
+      {{/if}}
+      {{#if next}}
+      {{#unless (eq next.id last.id)}}
+      <div class="lesson-card compact">
+        <div class="lesson-card-body"><span class="lesson-tier">Tier {{next.tier}} · {{next.duration}}</span><strong class="lesson-card-title">{{next.title}}</strong><span class="lesson-summary">{{next.summary}}</span></div>
+        <button type="button" class="primary-button" data-action="openLesson" data-lesson-id="{{next.id}}"><i class="fa-solid fa-book-open" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Start"}}</button>
+      </div>
+      {{/unless}}
+      {{else}}
+      <p class="hint">{{localize "GMMA.Dashboard.AllDone"}}</p>
+      {{/if}}
+      <div class="quick-actions">
+        <button type="button" class="secondary-button" data-action="openWorkshop" data-runtime="sandbox"><i class="fa-solid fa-flask" aria-hidden="true"></i> {{localize "GMMA.Nav.Workshop"}}</button>
+        <button type="button" class="secondary-button" data-action="navigate" data-view="glossary"><i class="fa-solid fa-spell-check" aria-hidden="true"></i> {{localize "GMMA.Nav.Glossary"}}</button>
+        <button type="button" class="secondary-button" data-action="navigate" data-view="curriculum"><i class="fa-solid fa-sitemap" aria-hidden="true"></i> {{localize "GMMA.Nav.Curriculum"}}</button>
+      </div>
+      {{#if review.length}}
+      <h4>{{localize "GMMA.Dashboard.Review"}}</h4>
+      <ul class="review-list">{{#each review}}<li><strong>{{concept}}</strong>: {{reason}} {{#each lessons}}<a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a>{{#unless @last}}, {{/unless}}{{/each}}</li>{{/each}}</ul>
+      {{/if}}
+    </section>
+
+    <section class="card card-available" aria-labelledby="dash-available">
+      <h3 id="dash-available"><i class="fa-solid fa-unlock" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Available"}}</h3>
+      {{#if available.length}}
+      <ul class="lesson-list">{{#each available}}<li class="lesson-card"><div class="lesson-card-body"><span class="lesson-tier">Tier {{tier}} · {{duration}} · {{difficulty}}</span><a class="lesson-card-title academy-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a><span class="lesson-summary">{{summary}}</span></div><span class="lesson-state state-{{state}}">{{stateLabel}}</span></li>{{/each}}</ul>
+      {{else}}<p class="hint">{{localize "GMMA.Dashboard.NoneAvailable"}}</p>{{/if}}
+    </section>
+
+    <section class="card card-activity" aria-labelledby="dash-activity">
+      <h3 id="dash-activity"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Recent"}}</h3>
+      {{#if recent.length}}<ul class="activity-list">{{#each recent}}<li><i class="fa-solid {{icon}}" aria-hidden="true"></i> <span class="activity-type">{{localize (concat "GMMA.Activity." type)}}</span> {{label}} <span class="activity-when">{{when}}</span></li>{{/each}}</ul>{{else}}<p class="hint">{{localize "GMMA.Dashboard.NoActivity"}}</p>{{/if}}
+    </section>
+
+    <section class="card card-achievements" aria-labelledby="dash-achievements">
+      <h3 id="dash-achievements"><i class="fa-solid fa-trophy" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Achievements"}} <span class="count">{{achievementCount}}/{{achievementTotal}}</span></h3>
+      {{#if earned.length}}<ul class="achievement-row">{{#each earned}}<li class="achievement earned" title="{{description}}"><i class="fa-solid {{icon}}" aria-hidden="true"></i><span>{{title}}</span></li>{{/each}}</ul>{{else}}<p class="hint">{{localize "GMMA.Dashboard.NoAchievements"}}</p>{{/if}}
+      <button type="button" class="link-button" data-action="navigate" data-view="progress">{{localize "GMMA.Dashboard.AllAchievements"}}</button>
+    </section>
+
+    <section class="card card-projects" aria-labelledby="dash-projects">
+      <h3 id="dash-projects"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i> {{localize "GMMA.Dashboard.Projects"}}</h3>
+      {{#if projects.length}}<ul class="project-list">{{#each projects}}<li><strong>{{name}}</strong> <span class="project-status status-{{status}}">{{status}}</span>{{#if lessonId}} · <a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{lessonId}}">lesson</a>{{/if}}</li>{{/each}}</ul>{{else}}<p class="hint">{{localize "GMMA.Dashboard.NoProjects"}}</p>{{/if}}
+    </section>
+  </div>
+</div>

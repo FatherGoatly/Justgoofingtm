@@ -1,0 +1,41 @@
+<div class="view curriculum">
+  <header class="view-header">
+    <h2>{{localize "GMMA.Curriculum.Title"}}</h2>
+    <p class="view-lead">{{localize "GMMA.Curriculum.Lead"}}</p>
+  </header>
+  <div class="curriculum-layout">
+    <aside class="filters" aria-label="{{localize "GMMA.Curriculum.Filters"}}">
+      <label class="field"><span>{{localize "GMMA.Curriculum.Search"}}</span><input type="search" name="curriculum-search" value="{{filters.text}}" placeholder="{{localize "GMMA.Curriculum.SearchPlaceholder"}}" autocomplete="off"></label>
+      <label class="field"><span>{{localize "GMMA.Curriculum.Status"}}</span><select data-filter="status">{{#each statuses}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select></label>
+      <fieldset><legend>{{localize "GMMA.Curriculum.Difficulty"}}</legend>{{#each difficulties}}<label class="choice"><input type="checkbox" data-filter="difficulty" value="{{id}}" {{#if checked}}checked{{/if}}> {{label}}</label>{{/each}}</fieldset>
+      <fieldset><legend>{{localize "GMMA.Curriculum.Category"}}</legend>{{#each categories}}<label class="choice"><input type="checkbox" data-filter="category" value="{{id}}" {{#if checked}}checked{{/if}}> {{label}}</label>{{/each}}</fieldset>
+      <fieldset><legend>{{localize "GMMA.Curriculum.Tiers"}}</legend>{{#each tierOptions}}<label class="choice"><input type="checkbox" data-filter="tier" value="{{id}}" {{#if checked}}checked{{/if}}> {{label}}</label>{{/each}}</fieldset>
+      {{#if filtersActive}}<button type="button" class="secondary-button" data-action="clearFilters"><i class="fa-solid fa-filter-circle-xmark" aria-hidden="true"></i> {{localize "GMMA.Curriculum.Clear"}}</button><p class="hint">{{resultCount}} {{localize "GMMA.Curriculum.Results"}}</p>{{/if}}
+    </aside>
+    <div class="tier-tree">
+      {{#each tiers}}
+      <details class="tier" {{#unless collapsed}}open{{/unless}}>
+        <summary><span class="tier-number">Tier {{number}}</span> <span class="tier-title">{{title}}</span> <span class="tier-progress"><span class="bar" style="--percent: {{mastery.percent}};"></span> {{mastery.completed}}/{{mastery.total}}{{#if mastery.mastered}} · <i class="fa-solid fa-medal" aria-hidden="true"></i> {{localize "GMMA.Curriculum.Mastered"}}{{/if}}</span></summary>
+        <p class="tier-objective">{{objective}}</p>
+        <p class="tier-graduation"><strong>{{localize "GMMA.Curriculum.Graduation"}}:</strong> {{graduation}}</p>
+        <ul class="lesson-list">
+          {{#each lessons}}
+          <li class="lesson-card state-{{state}} {{#if locked}}locked{{/if}} {{#if unavailable}}unavailable{{/if}}">
+            <div class="lesson-card-body">
+              <span class="lesson-tier">{{duration}} · {{difficulty}} · {{localize (concat "GMMA.Categories." category)}}{{#if isProject}} · <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> project{{/if}}</span>
+              <a class="lesson-card-title academy-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a>
+              <span class="lesson-summary">{{summary}}</span>
+              {{#if locked}}<span class="lock-reason"><i class="fa-solid fa-lock" aria-hidden="true"></i> {{localize "GMMA.Curriculum.LockedBy"}} {{#each missing}}<a class="academy-link lesson-link" data-action="openLesson" data-lesson-id="{{id}}">{{title}}</a>{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}
+              {{#if unavailable}}<span class="lock-reason"><i class="fa-solid fa-plug-circle-xmark" aria-hidden="true"></i> {{#each unavailableReasons}}{{this}} {{/each}}</span>{{/if}}
+              {{#if reviewSuggested}}<span class="lock-reason review"><i class="fa-solid fa-rotate" aria-hidden="true"></i> {{localize "GMMA.Curriculum.ReviewSuggested"}}</span>{{/if}}
+            </div>
+            <span class="lesson-state state-{{state}}" title="{{stateDescription}}">{{#if bookmarked}}<i class="fa-solid fa-bookmark" aria-hidden="true"></i> {{/if}}{{stateLabel}}</span>
+          </li>
+          {{/each}}
+        </ul>
+      </details>
+      {{/each}}
+      {{#unless tiers.length}}<p class="hint">{{localize "GMMA.Curriculum.NoResults"}}</p>{{/unless}}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<section class="workshop-results" aria-label="{{localize "GMMA.Workshop.Results"}}" aria-live="polite">
+  <div class="results-scroll">
+    {{#if running}}<div class="results-running"><i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> {{localize "GMMA.Workshop.Running"}}</div>{{/if}}
+    {{{resultsHtml}}}
+  </div>
+</section>

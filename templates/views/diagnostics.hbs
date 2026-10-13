@@ -1,0 +1,36 @@
+<div class="view diagnostics-view">
+  <header class="view-header"><h2>{{localize "GMMA.Diagnostics.Title"}}</h2><p class="view-lead">{{localize "GMMA.Diagnostics.Lead"}}</p></header>
+  <div class="diagnostics-grid">
+    <section class="card"><h3><i class="fa-solid fa-microchip" aria-hidden="true"></i> {{localize "GMMA.Diagnostics.Environment"}}</h3>
+      <dl class="kv"><dt>Foundry</dt><dd>{{report.foundry.version}} {{#unless report.foundry.supported}}<span class="badge warn">{{localize "GMMA.Diagnostics.Unsupported"}}</span>{{/unless}}</dd>
+      <dt>{{localize "GMMA.Diagnostics.System"}}</dt><dd>{{#if report.system}}{{report.system.title}} {{report.system.version}} · adapter <code>{{report.system.adapter}}</code> (verified {{report.system.adapterVerified.verified}}){{#unless report.system.versionSupported}} <span class="badge warn">{{localize "GMMA.Diagnostics.OutOfRange"}}</span>{{/unless}}{{else}}—{{/if}}</dd>
+      <dt>{{localize "GMMA.Diagnostics.User"}}</dt><dd>{{permissions.name}} · {{permissions.role}}{{#if permissions.isGM}} (GM){{/if}}</dd>
+      <dt>{{localize "GMMA.Diagnostics.Workers"}}</dt><dd>{{#if workersSupported}}{{localize "GMMA.Diagnostics.Available"}}{{else}}<span class="badge warn">{{localize "GMMA.Diagnostics.Unavailable"}}</span>{{/if}}</dd></dl>
+      <h4>{{localize "GMMA.Diagnostics.Permissions"}}</h4><ul class="perm-list">{{#each permissions.permissions}}<li class="{{#if this}}on{{else}}off{{/if}}"><i class="fa-solid {{#if this}}fa-check{{else}}fa-xmark{{/if}}" aria-hidden="true"></i> {{@key}}</li>{{/each}}</ul>
+      <h4>{{localize "GMMA.Diagnostics.Modules"}}</h4><ul class="module-list">{{#each report.modules}}<li class="{{#if active}}on{{else}}off{{/if}}"><strong>{{title}}</strong>: {{#if active}}{{version}}{{#if verified}} (verified {{verified}}){{/if}}{{#unless supported}} <span class="badge warn">{{localize "GMMA.Diagnostics.BelowMinimum"}}</span>{{/unless}}{{else}}{{localize "GMMA.Diagnostics.Inactive"}}{{/if}}</li>{{/each}}</ul>
+      {{#if report.warnings.length}}<h4>{{localize "GMMA.Diagnostics.Warnings"}}</h4><ul class="warning-list">{{#each report.warnings}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+    </section>
+    <section class="card"><h3><i class="fa-solid fa-plug" aria-hidden="true"></i> {{localize "GMMA.Diagnostics.Adapter"}}</h3>
+      <p><strong>{{adapter.title}}</strong> · {{localize "GMMA.Diagnostics.Capabilities"}}: {{#each adapter.capabilities}}<code>{{this}}</code> {{/each}}</p>
+      {{#if workflows.length}}<h4>{{localize "GMMA.Diagnostics.Workflows"}}</h4><dl class="kv">{{#each workflows}}<dt><code>{{call}}</code></dt><dd>{{note}}</dd>{{/each}}</dl>{{/if}}
+      {{#if curriculumIssues.length}}<h4>{{localize "GMMA.Diagnostics.CurriculumIssues"}}</h4><ul class="warning-list">{{#each curriculumIssues}}<li><code>{{path}}</code>: {{message}}</li>{{/each}}</ul>{{/if}}
+    </section>
+    <section class="card"><h3><i class="fa-solid fa-map" aria-hidden="true"></i> {{localize "GMMA.Fixtures.Heading"}}</h3>
+      <p class="hint">{{localize "GMMA.Fixtures.Lead"}}</p>
+      <p>{{#if fixtures.exists}}{{localize "GMMA.Fixtures.Exists"}} <strong>{{fixtures.sceneName}}</strong>, {{fixtures.actorCount}} {{localize "GMMA.Fixtures.Actors"}}{{#unless fixtures.complete}} <span class="badge warn">{{localize "GMMA.Fixtures.Incomplete"}}</span>{{/unless}}{{else}}{{localize "GMMA.Fixtures.Missing"}}{{/if}}</p>
+      {{#if fixtures.canManage}}
+      <div class="fixture-toolbar">
+        <button type="button" class="primary-button" data-action="createFixtures" {{#if fixtures.complete}}disabled{{/if}}><i class="fa-solid fa-plus" aria-hidden="true"></i> {{localize "GMMA.Fixtures.Create"}}</button>
+        <button type="button" class="secondary-button" data-action="resetFixtures" {{#unless fixtures.exists}}disabled{{/unless}}><i class="fa-solid fa-rotate" aria-hidden="true"></i> {{localize "GMMA.Fixtures.Reset"}}</button>
+        <button type="button" class="secondary-button danger" data-action="cleanupFixtures" {{#unless fixtures.exists}}disabled{{/unless}}><i class="fa-solid fa-broom" aria-hidden="true"></i> {{localize "GMMA.Fixtures.Cleanup"}}</button>
+      </div>
+      <ol class="hint">{{#each fixtures.steps}}<li>{{this}}</li>{{/each}}</ol>
+      {{else}}<p class="hint">{{localize "GMMA.Fixtures.GMOnly"}}</p>{{/if}}
+    </section>
+    <section class="card card-report"><h3><i class="fa-solid fa-clipboard" aria-hidden="true"></i> {{localize "GMMA.Diagnostics.Report"}}</h3>
+      <p class="hint">{{localize "GMMA.Diagnostics.ReportLead"}}</p>
+      <textarea name="diagnostic-report" rows="14" readonly spellcheck="false">{{reportText}}</textarea>
+      <button type="button" class="secondary-button" data-action="copyDiagnostics"><i class="fa-solid fa-copy" aria-hidden="true"></i> {{localize "GMMA.Diagnostics.Copy"}}</button>
+    </section>
+  </div>
+</div>

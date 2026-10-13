@@ -1,0 +1,6 @@
+<aside class="workshop-side" aria-label="{{localize "GMMA.Workshop.SidePanel"}}">
+  <nav class="side-tabs" role="tablist">
+    {{#each sideTabs}}<button type="button" role="tab" class="side-tab {{#if active}}active{{/if}}" aria-selected="{{#if active}}true{{else}}false{{/if}}" data-action="sideTab" data-tab="{{id}}"><i class="fa-solid {{icon}}" aria-hidden="true"></i> <span>{{label}}</span></button>{{/each}}
+  </nav>
+  <div class="side-scroll" role="tabpanel">{{{sideHtml}}}</div>
+</aside>
