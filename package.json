@@ -1,0 +1,19 @@
+{
+  "name": "heroic-villainous-actions",
+  "version": "1.0.0",
+  "description": "Heroic & Villainous Actions for Foundry VTT V14 and the D&D 5e system (6.x).",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint scripts tests tools",
+    "validate": "node tools/validate-manifest.mjs",
+    "package": "node tools/package.mjs"
+  },
+  "devDependencies": {
+    "eslint": "^9.14.0",
+    "globals": "^15.12.0",
+    "vitest": "^2.1.4"
+  }
+}

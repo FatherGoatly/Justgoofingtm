@@ -1,0 +1,17 @@
+<div class="hva-sheet-card">
+  <h4><i class="fa-solid fa-dice-d20"></i> {{localize "HVA.Sheet.Title"}}
+    <a class="hva-open" data-hva-action="open" data-tooltip="HVA.Sheet.OpenPanel" aria-label="{{localize 'HVA.Sheet.OpenPanel'}}"><i class="fa-solid fa-up-right-from-square"></i></a>
+  </h4>
+  {{#each pools}}
+  <div class="hva-row">
+    <span class="hva-counter {{pool}}" data-tooltip="{{label}}" aria-label="{{label}}: {{count}} / {{max}}">
+      <i class="{{icon}}"></i>
+      <span class="hva-pips">{{#each pips}}<span class="hva-pip {{#if filled}}filled{{/if}}"></span>{{/each}}</span>
+      <span class="hva-count-text">{{count}}/{{max}}</span>
+    </span>
+    <span class="hva-ability-name" title="{{abilityName}}">{{abilityName}}</span>
+    {{#if canUse}}<button type="button" data-hva-action="use" data-pool="{{pool}}">{{localize "HVA.Panel.Use"}}</button>{{/if}}
+    {{#if canDefine}}<button type="button" data-hva-action="define" data-pool="{{pool}}">{{localize "HVA.Panel.Define"}}</button>{{/if}}
+  </div>
+  {{/each}}
+</div>

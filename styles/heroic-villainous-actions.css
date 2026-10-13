@@ -1,0 +1,120 @@
+/* Heroic & Villainous Actions */
+:root {
+  --hva-heroic: #c99a2e;
+  --hva-heroic-bg: rgba(201, 154, 46, 0.14);
+  --hva-villainous: #7a2d8c;
+  --hva-villainous-bg: rgba(122, 45, 140, 0.16);
+}
+
+.hva .window-content, .hva-chat-card { font-family: var(--font-primary, inherit); }
+
+/* Counters & pips */
+.hva-counter { display: flex; align-items: center; gap: 0.35rem; }
+.hva-counter .hva-pips { display: inline-flex; gap: 3px; }
+.hva-pip {
+  width: 12px; height: 12px; border-radius: 50%; border: 2px solid currentColor; opacity: 0.35; display: inline-block;
+}
+.hva-pip.filled { opacity: 1; background: currentColor; }
+.hva-counter.heroic { color: var(--hva-heroic); }
+.hva-counter.villainous { color: var(--hva-villainous); }
+.hva-counter .hva-count-text { color: var(--color-text-primary, inherit); font-weight: 600; }
+
+/* Badges */
+.hva-badges { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.25rem 0; }
+.hva-badge {
+  display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: var(--font-size-11, 11px);
+  border: 1px solid var(--color-border-light-2, #999); text-transform: uppercase; letter-spacing: 0.03em;
+}
+.hva-badge.mode-manual { border-style: dashed; }
+.hva-badge.mode-automated { border-color: var(--color-text-hyperlink, #2a6fdb); }
+.hva-badge.approval-pending { border-color: #c77d00; color: #c77d00; }
+.hva-badge.approval-rejected { border-color: #b02a2a; color: #b02a2a; }
+
+/* Sheet card */
+.hva-sheet-card {
+  margin: 0.5rem 0; padding: 0.5rem; border-radius: 6px; border: 1px solid var(--color-border-light-2, #bbb);
+  background: var(--dnd5e-color-card, rgba(0,0,0,0.04));
+}
+.hva-sheet-card h4 { margin: 0 0 0.35rem; font-size: var(--font-size-13, 13px); display: flex; align-items: center; gap: 0.35rem; }
+.hva-sheet-card h4 .hva-open { margin-left: auto; cursor: pointer; }
+.hva-sheet-card .hva-row { display: flex; align-items: center; gap: 0.4rem; padding: 2px 0; }
+.hva-sheet-card .hva-row .hva-ability-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: italic; opacity: 0.85; }
+.hva-sheet-card .hva-row button { flex: 0 0 auto; width: auto; line-height: 1.4; padding: 0 6px; font-size: var(--font-size-11, 11px); }
+
+/* Action panel */
+.hva-panel .hva-actor { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; }
+.hva-panel .hva-actor img { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid var(--color-border-light-2, #bbb); }
+.hva-panel .hva-actor h2 { margin: 0; border: none; }
+.hva-panel .hva-pools { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+.hva-pool-card { border: 1px solid var(--color-border-light-2, #bbb); border-radius: 8px; padding: 0.6rem; display: flex; flex-direction: column; gap: 0.4rem; }
+.hva-pool-card.heroic { background: var(--hva-heroic-bg); border-color: var(--hva-heroic); }
+.hva-pool-card.villainous { background: var(--hva-villainous-bg); border-color: var(--hva-villainous); }
+.hva-pool-card h3 { margin: 0; border: none; display: flex; align-items: center; gap: 0.4rem; font-size: var(--font-size-15, 15px); }
+.hva-pool-card .hva-ability-title { font-weight: 600; }
+.hva-pool-card .hva-undefined { font-style: italic; opacity: 0.75; }
+.hva-pool-card .hva-description { max-height: 9em; overflow: auto; font-size: var(--font-size-12, 12px); }
+.hva-pool-card .hva-description p { margin: 0 0 0.3em; }
+.hva-pool-card .hva-controls { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: auto; }
+.hva-pool-card .hva-controls button { width: auto; flex: 1 1 auto; }
+.hva-panel .hva-history { margin-top: 0.6rem; }
+.hva-panel .hva-history table { font-size: var(--font-size-11, 11px); }
+.hva-panel .hva-history td, .hva-panel .hva-history th { padding: 2px 4px; }
+.hva-panel .hva-empty { opacity: 0.7; font-style: italic; }
+
+/* Define dialog */
+.hva-define .hva-prompt { font-style: italic; font-size: var(--font-size-13, 13px); }
+.hva-define .hva-examples ul { margin: 0.2rem 0 0.4rem 1rem; font-size: var(--font-size-12, 12px); }
+.hva-define .hva-errors { list-style: none; margin: 0 0 0.5rem; padding: 0.4rem 0.6rem; border: 1px solid #b02a2a; border-radius: 4px; color: #b02a2a; }
+.hva-define .hva-mechanics { display: flex; flex-direction: column; gap: 0.35rem; }
+.hva-define .hva-mechanic-row { display: flex; flex-wrap: wrap; gap: 0.3rem; align-items: center; }
+.hva-define .hva-mechanic-row select, .hva-define .hva-mechanic-row input { flex: 1 1 120px; min-width: 90px; }
+.hva-define .hva-mechanic-row button.icon { flex: 0 0 auto; width: 28px; }
+.hva-define .hva-preview h3 { display: flex; align-items: center; gap: 0.4rem; }
+.hva-define .hva-details { display: grid; grid-template-columns: max-content 1fr; gap: 0.1rem 0.6rem; font-size: var(--font-size-12, 12px); }
+.hva-define .hva-details dt { font-weight: 600; }
+.hva-define .hva-details dd { margin: 0; }
+
+/* Activation dialog */
+.hva-activate-body h3 { display: flex; align-items: center; gap: 0.4rem; }
+.hva-activate-body .hva-cost { font-weight: 600; margin-top: 0.5rem; }
+.hva-activate-body.heroic h3 i { color: var(--hva-heroic); }
+.hva-activate-body.villainous h3 i { color: var(--hva-villainous); }
+
+/* Chat cards */
+.hva-chat-card { border: 1px solid var(--color-border-light-2, #bbb); border-left-width: 4px; border-radius: 4px; padding: 0.4rem 0.5rem; }
+.hva-chat-card.heroic { border-left-color: var(--hva-heroic); }
+.hva-chat-card.villainous { border-left-color: var(--hva-villainous); }
+.hva-chat-card.blocked { opacity: 0.85; border-style: dashed; }
+.hva-chat-card.failed { border-color: #b02a2a; }
+.hva-chat-card header { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.2rem; }
+.hva-chat-card.heroic header i { color: var(--hva-heroic); }
+.hva-chat-card.villainous header i { color: var(--hva-villainous); }
+.hva-chat-card .hva-chat-meta { font-size: var(--font-size-11, 11px); opacity: 0.85; margin: 0 0 0.3rem; }
+.hva-chat-card .hva-chat-counter { font-size: var(--font-size-12, 12px); font-weight: 600; margin: 0.3rem 0 0; }
+.hva-chat-card .hva-results { margin: 0.3rem 0 0 1rem; padding: 0; font-size: var(--font-size-12, 12px); }
+.hva-chat-card .hva-description p { margin: 0 0 0.25em; }
+.hva-chat-card .hva-applied { opacity: 0.8; }
+
+/* GM management */
+.hva-gm table { width: 100%; border-collapse: collapse; }
+.hva-gm th, .hva-gm td { padding: 3px 4px; vertical-align: middle; font-size: var(--font-size-12, 12px); }
+.hva-gm .hva-adjust { display: inline-flex; align-items: center; gap: 2px; }
+.hva-gm .hva-adjust button { width: 24px; height: 24px; padding: 0; line-height: 1; }
+.hva-gm .hva-adjust input { width: 38px; text-align: center; }
+.hva-gm .hva-ability-cell { max-width: 220px; }
+.hva-gm .hva-ability-cell .hva-ability-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hva-gm .hva-ability-cell button { width: auto; font-size: var(--font-size-11, 11px); padding: 0 6px; line-height: 1.5; }
+.hva-gm .hva-tabs { display: flex; gap: 0.4rem; margin-bottom: 0.5rem; }
+.hva-gm .hva-tabs button { width: auto; }
+.hva-gm .hva-tabs button.active { font-weight: 700; text-decoration: underline; }
+.hva-gm .hva-diag { font-family: var(--font-monospace, monospace); font-size: var(--font-size-11, 11px); max-height: 420px; overflow: auto; }
+.hva-gm .hva-diag li { border-bottom: 1px solid var(--color-border-light-1, #ddd); padding: 2px 0; }
+.hva-gm .hva-diag .status-awarded { color: #2d7a2d; font-weight: 600; }
+.hva-gm .hva-diag .status-duplicate, .hva-gm .hva-diag .status-notQualifying { opacity: 0.7; }
+.hva-gm .hva-diag .status-error { color: #b02a2a; }
+
+/* Settings help */
+.hva-help h3 { margin-top: 0.8rem; }
+.hva-help dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.15rem 0.8rem; }
+.hva-help dt { font-weight: 600; }
+.hva-help dd { margin: 0; }

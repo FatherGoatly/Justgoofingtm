@@ -1,0 +1,12 @@
+<div class="hva-activate-body {{pool}}">
+  <h3><i class="{{#if isHeroic}}fa-solid fa-sun{{else}}fa-solid fa-skull{{/if}}"></i> {{ability.name}}</h3>
+  <p class="hva-badges">
+    <span class="hva-badge mode-{{ability.mode}}">{{#if isManual}}{{localize "HVA.Mode.manual"}}{{else}}{{localize "HVA.Mode.automated"}}{{/if}}</span>
+    <span class="hva-badge">{{activationLabel}}</span>
+  </p>
+  <div class="hva-description">{{#each descriptionLines}}<p>{{this}}</p>{{/each}}</div>
+  {{#if mechanics.length}}<ol class="hva-mechanic-list">{{#each mechanics}}<li>{{this}}</li>{{/each}}</ol>{{/if}}
+  {{#if isManual}}<p class="hint">{{localize "HVA.Activate.ManualNotice"}}</p>{{/if}}
+  {{#if targets.length}}<p class="hint">{{localize "HVA.Activate.Targets"}}: {{#each targets}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>{{/if}}
+  <p class="hva-cost">{{localize "HVA.Activate.CostLine" cost=cost pool=poolLabel remaining=remaining}}</p>
+</div>

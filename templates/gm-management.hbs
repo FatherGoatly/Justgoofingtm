@@ -1,0 +1,71 @@
+<div class="hva-tabs">
+  <button type="button" data-action="tab" data-tab="actors" class="{{#if (eq tab "actors")}}active{{/if}}"><i class="fa-solid fa-users"></i> {{localize "HVA.GM.Tab.Actors"}}</button>
+  <button type="button" data-action="tab" data-tab="diagnostics" class="{{#if (eq tab "diagnostics")}}active{{/if}}"><i class="fa-solid fa-stethoscope"></i> {{localize "HVA.GM.Tab.Diagnostics"}}</button>
+  <button type="button" data-action="refresh" style="margin-left:auto"><i class="fa-solid fa-rotate"></i></button>
+</div>
+<div class="hva-scroll" style="overflow:auto;max-height:540px">
+{{#if (eq tab "actors")}}
+<p class="hint">{{localize "HVA.GM.ActorsHint" max=max}} {{#if overrideAllowed}}{{localize "HVA.GM.OverrideOn"}}{{/if}}</p>
+<label class="checkbox"><input type="checkbox" data-action="toggleNPCs" {{checked includeNPCs}}> {{localize "HVA.GM.IncludeNPCs"}}</label>
+<table>
+  <thead>
+    <tr>
+      <th>{{localize "Actor"}}</th>
+      <th><i class="fa-solid fa-sun"></i> {{localize "HVA.Pool.Heroic"}}</th>
+      <th><i class="fa-solid fa-skull"></i> {{localize "HVA.Pool.Villainous"}}</th>
+      <th>{{localize "HVA.GM.Last"}}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each rows}}
+    <tr>
+      <td><strong>{{name}}</strong><br><span class="hint">{{owners}}</span></td>
+      {{#each pools}}
+      <td>
+        <div class="hva-adjust">
+          <button type="button" data-action="adjust" data-uuid="{{../uuid}}" data-pool="{{pool}}" data-delta="-1" aria-label="-1">−</button>
+          <input type="number" value="{{count}}" min="0" data-set-for="{{../uuid}}:{{pool}}" aria-label="{{label}}">
+          <button type="button" data-action="adjust" data-uuid="{{../uuid}}" data-pool="{{pool}}" data-delta="1" aria-label="+1">+</button>
+          <button type="button" data-action="set" data-uuid="{{../uuid}}" data-pool="{{pool}}" data-tooltip="HVA.GM.Set"><i class="fa-solid fa-floppy-disk"></i></button>
+        </div>
+        <div class="hva-ability-cell">
+          {{#if defined}}
+          <span class="hva-ability-name" title="{{ability.name}}">{{ability.name}}</span>
+          <span class="hva-badge mode-{{ability.mode}}">{{localize (concat "HVA.Mode." ability.mode)}}</span>
+          {{#if (ne approval "notRequired")}}<span class="hva-badge approval-{{approval}}">{{approvalLabel}}</span>{{/if}}
+          <button type="button" data-action="define" data-uuid="{{../uuid}}" data-pool="{{pool}}"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button type="button" data-action="clear" data-uuid="{{../uuid}}" data-pool="{{pool}}"><i class="fa-solid fa-eraser"></i></button>
+          {{#if needsApproval}}<button type="button" data-action="approve" data-uuid="{{../uuid}}" data-pool="{{pool}}"><i class="fa-solid fa-check"></i> {{localize "HVA.Panel.Approve"}}</button>{{/if}}
+          {{#if isApproved}}<button type="button" data-action="reject" data-uuid="{{../uuid}}" data-pool="{{pool}}"><i class="fa-solid fa-ban"></i></button>{{/if}}
+          {{else}}
+          <span class="hint">{{localize "HVA.GM.Undefined"}}</span>
+          <button type="button" data-action="define" data-uuid="{{../uuid}}" data-pool="{{pool}}"><i class="fa-solid fa-pen"></i></button>
+          {{/if}}
+        </div>
+      </td>
+      {{/each}}
+      <td class="hint">{{lastHistory}}</td>
+      <td>
+        <button type="button" data-action="openPanel" data-uuid="{{uuid}}" data-tooltip="HVA.GM.OpenPanel"><i class="fa-solid fa-dice-d20"></i></button>
+        <button type="button" data-action="reset" data-uuid="{{uuid}}" data-tooltip="HVA.GM.Reset"><i class="fa-solid fa-arrow-rotate-left"></i></button>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{else}}
+<p class="hint">{{localize "HVA.GM.DiagnosticsHint"}} {{#unless diagnosticsEnabled}}{{localize "HVA.GM.DiagnosticsOff"}}{{/unless}}</p>
+<button type="button" data-action="clearDiagnostics" style="width:auto"><i class="fa-solid fa-trash"></i> {{localize "HVA.GM.ClearDiagnostics"}}</button>
+<ul class="hva-diag">
+  {{#each entries}}
+  <li class="status-{{status}}" title="{{json}}">
+    {{time}} · <strong>{{statusLabel}}</strong> · {{#if actor}}{{actor.name}}{{else}}—{{/if}} · {{categoryLabel}}
+    {{#if naturals}} · d20: {{naturals}}{{/if}}{{#if reason}} · {{reason}}{{/if}}{{#if hookName}} · {{hookName}}{{/if}}{{#if error}} · {{error}}{{/if}}
+  </li>
+  {{else}}
+  <li class="hint">{{localize "HVA.GM.NoDiagnostics"}}</li>
+  {{/each}}
+</ul>
+{{/if}}
+</div>

@@ -1,0 +1,25 @@
+<div class="hva-chat-card activation {{pool}} {{#if failed}}failed{{/if}}">
+  <header><i class="{{icon}}"></i> <strong>{{ability.name}}</strong></header>
+  <p class="hva-chat-meta">
+    {{localize "HVA.Chat.Activated" actor=actor.name}} ·
+    <span class="hva-badge mode-{{ability.mode}}">{{#if isManual}}{{localize "HVA.Mode.manual"}}{{else}}{{localize "HVA.Mode.automated"}}{{/if}}</span>
+    <span class="hva-badge">{{activationLabel}}</span>
+  </p>
+  <div class="hva-description">{{#each descriptionLines}}<p>{{this}}</p>{{/each}}</div>
+  {{#if isManual}}<p class="hint">{{localize "HVA.Chat.ManualNotice"}}</p>{{/if}}
+  {{#if results.length}}
+  <ul class="hva-results">
+    {{#each results}}
+    <li><strong>{{summary}}</strong>
+      {{#if total}} — {{total}}{{/if}}
+      {{#if choice}} — {{choice}}{{/if}}
+      {{#if text}} — {{text}}{{/if}}
+      {{#if enricher}} {{{enricher}}}{{/if}}
+      {{#if applied.length}}<span class="hva-applied">({{#each applied}}{{name}}{{#if delegated}} ⏳{{/if}}{{#if skipped}} ✗{{/if}}{{#unless @last}}, {{/unless}}{{/each}})</span>{{/if}}
+    </li>
+    {{/each}}
+  </ul>
+  {{/if}}
+  {{#if failed}}<p class="notification error">{{localize "HVA.Chat.Failed" error=error}}</p>{{/if}}
+  <p class="hva-chat-counter"><i class="{{icon}}"></i> {{localize "HVA.Chat.Spent" cost=cost pool=label remaining=remaining}}</p>
+</div>

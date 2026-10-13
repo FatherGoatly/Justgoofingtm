@@ -1,0 +1,423 @@
+{
+  "HVA": {
+    "Pool": {
+      "Heroic": "Heroic Actions",
+      "Villainous": "Villainous Actions"
+    },
+    "Cost": "Cost",
+    "Settings": {
+      "enableHeroic": {
+        "Name": "Enable Heroic Actions",
+        "Hint": "Natural 20s on qualifying rolls award Heroic Actions."
+      },
+      "enableVillainous": {
+        "Name": "Enable Villainous Actions",
+        "Hint": "Natural 1s on qualifying rolls award Villainous Actions."
+      },
+      "advantagePolicy": {
+        "Name": "Advantage & Disadvantage Handling",
+        "Hint": "Selected result only (default): only the d20 used for the final outcome can award. Any die: every d20 in the roll can award, including the unselected die (more generous; a roll with 1 and 20 awards both). Ordinary rolls only: rolls made with advantage or disadvantage never award.",
+        "Selected": "Selected result only (recommended)",
+        "Any": "Any die showing 1 or 20",
+        "OrdinaryOnly": "Ordinary rolls only"
+      },
+      "rerollPolicy": {
+        "Name": "Reroll Handling",
+        "Hint": "Final result (default): dice replaced by a reroll (e.g. Halfling Lucky) are ignored and the kept die decides. Exclude rerolled rolls: any roll in which the primary d20 was rerolled never awards.",
+        "Final": "Final kept result",
+        "ExcludeRerolled": "Exclude rolls with rerolls"
+      },
+      "npcGeneration": {
+        "Name": "NPCs Earn Resources",
+        "Hint": "When enabled, NPC rolls also generate Heroic and Villainous Actions. The GM can always grant resources to NPCs manually."
+      },
+      "capBehavior": {
+        "Name": "Behavior at the Resource Cap",
+        "Hint": "What happens when a qualifying roll cannot award because the pool already holds three.",
+        "Notify": "Announce the blocked award",
+        "Silent": "Log only"
+      },
+      "notificationMode": {
+        "Name": "Award Chat Notifications",
+        "Hint": "Where to announce earned resources: publicly, privately to the owners and GM, or not at all.",
+        "Public": "Public",
+        "Private": "Owners & GM only",
+        "None": "None"
+      },
+      "showToasts": {
+        "Name": "Show Toast Notifications",
+        "Hint": "Show a brief UI notification when one of your characters earns a resource (per client)."
+      },
+      "countOutsideCombat": {
+        "Name": "Count Rolls Outside Combat",
+        "Hint": "When disabled, only rolls made while a combat encounter is active generate resources."
+      },
+      "activationPolicy": {
+        "Name": "Activation Policy",
+        "Hint": "Flexible: use each ability's own activation requirements. Legendary-style: off-turn use only for reactions and special activations, limited per round. Turn-bound: only on the character's own turn unless the ability is a reaction or special activation. GM-controlled: the GM must approve every activation.",
+        "Flexible": "Flexible",
+        "Legendary": "Legendary-style",
+        "TurnBound": "Turn-bound",
+        "GMControlled": "GM-controlled"
+      },
+      "legendaryUsesPerRound": {
+        "Name": "Legendary-style Uses per Round",
+        "Hint": "Maximum off-turn activations per combat round under the Legendary-style policy (0 = unlimited)."
+      },
+      "allowAbilityOutsideCombat": {
+        "Name": "Allow Abilities Outside Combat",
+        "Hint": "Players may activate abilities when no combat is active."
+      },
+      "requireGMApprovalForAutomation": {
+        "Name": "GM Approval for Automated Abilities",
+        "Hint": "Automated abilities defined by players must be approved by the GM before they can be used. Any change to their mechanics resets approval."
+      },
+      "defaultCost": {
+        "Name": "Default Resource Cost",
+        "Hint": "Default number of actions an ability costs when it is first defined."
+      },
+      "playersCanEditAbilities": {
+        "Name": "Players May Edit Definitions",
+        "Hint": "Owners can edit the name, description and mechanics of their abilities after the first definition."
+      },
+      "playersCanUseManualWithoutApproval": {
+        "Name": "Manual Abilities Without Approval",
+        "Hint": "Players may use manual (descriptive) abilities without prior GM approval."
+      },
+      "requirePublicChat": {
+        "Name": "Require Public Activation Messages",
+        "Hint": "Activation cards are always public, ignoring the user's roll mode."
+      },
+      "allowAdminOverride": {
+        "Name": "Allow Administrative Override",
+        "Hint": "Let the GM set resource counts above the maximum of three. Overrides are logged in the actor's history."
+      },
+      "diagnostics": {
+        "Name": "Diagnostics Logging",
+        "Hint": "Log every classification decision to the console and the GM management diagnostics tab (per client)."
+      },
+      "showSheetCard": {
+        "Name": "Show Sheet Card",
+        "Hint": "Show the Heroic & Villainous card on character and NPC sheets (per client)."
+      },
+      "Menu": {
+        "GMManagement": {
+          "Name": "GM Management",
+          "Label": "Manage Resources",
+          "Hint": "Adjust, set and reset resources, review ability definitions and inspect roll diagnostics."
+        },
+        "SettingsHelp": {
+          "Name": "Rules Reference",
+          "Label": "Open Rules Reference",
+          "Hint": "Documentation of the rules, policies and their defaults."
+        }
+      }
+    },
+    "Category": {
+      "attack": {
+        "Name": "Attack Rolls",
+        "Hint": "Weapon and spell attack rolls."
+      },
+      "abilityCheck": {
+        "Name": "Ability Checks",
+        "Hint": "Raw ability checks."
+      },
+      "skillCheck": {
+        "Name": "Skill Checks",
+        "Hint": "Skill checks."
+      },
+      "toolCheck": {
+        "Name": "Tool Checks",
+        "Hint": "Tool checks."
+      },
+      "savingThrow": {
+        "Name": "Saving Throws",
+        "Hint": "Ability saving throws."
+      },
+      "deathSave": {
+        "Name": "Death Saving Throws",
+        "Hint": "Death saving throws (off by default: a natural 20 already restores the character)."
+      },
+      "concentration": {
+        "Name": "Concentration Saves",
+        "Hint": "Concentration saving throws."
+      },
+      "initiative": {
+        "Name": "Initiative",
+        "Hint": "Initiative rolls (off by default)."
+      },
+      "unknown": {
+        "Name": "Unknown",
+        "Hint": "Roll of unknown provenance; never awards."
+      }
+    },
+    "Activation": {
+      "action": "Action",
+      "bonus": "Bonus Action",
+      "reaction": "Reaction",
+      "free": "Free",
+      "special": "Special (Legendary-style)"
+    },
+    "ActivationReason": {
+      "ok": "Ready.",
+      "noResource": "Not enough actions in that pool.",
+      "outsideCombat": "Abilities can only be used during combat (GM setting).",
+      "notYourTurn": "This ability can only be used on your own turn under the current activation policy.",
+      "legendaryLimit": "The limit of off-turn activations for this round has been reached.",
+      "needsGmApproval": "The GM must approve this activation.",
+      "automationNotApproved": "This automated ability has not been approved by the GM yet.",
+      "manualNotApproved": "This ability has not been approved by the GM yet.",
+      "gmDenied": "The GM did not approve the activation (or no GM is connected)."
+    },
+    "Approval": {
+      "Title": "Approve Ability Activation",
+      "Content": "{user} wants {actor} to spend a {pool} resource to use \"{ability}\". Approve?",
+      "State": {
+        "notRequired": "No approval needed",
+        "pending": "Awaiting GM approval",
+        "approved": "GM approved",
+        "rejected": "Rejected by GM"
+      }
+    },
+    "Chat": {
+      "Earned": {
+        "heroic": "A Heroic Action has been earned!",
+        "villainous": "A Villainous Action has been earned!"
+      },
+      "AtMaximum": {
+        "heroic": "Heroic Actions are already at maximum capacity.",
+        "villainous": "Villainous Actions are already at maximum capacity."
+      },
+      "Natural": "natural {natural}",
+      "Activated": "{actor} unleashes an extraordinary action",
+      "ManualNotice": "Manual ability: resolve the effect with the GM.",
+      "Failed": "Execution failed and the resource was refunded: {error}",
+      "Spent": "Spent {cost} {pool}. Remaining: {remaining}"
+    },
+    "Mode": {
+      "manual": "Manual",
+      "automated": "Automated"
+    },
+    "Define": {
+      "Title": {
+        "heroic": "Define Your Heroic Action — {actor}",
+        "villainous": "Define Your Villainous Action — {actor}"
+      },
+      "EditTitle": "Edit Ability — {actor}",
+      "Prompt": {
+        "heroic": "Your character has reached a moment of extraordinary heroism. What exceptional deed can they perform when spending a Heroic Action?",
+        "villainous": "Your character has unlocked a moment of ruthless, daring, or overwhelming power. What exceptional deed can they perform when spending a Villainous Action? (This describes the nature of the act, not your alignment.)"
+      },
+      "Examples": {
+        "heroic": "Second Wind of Valor: regain hit points and shrug off a condition.\nInspiring Rally: allies within 30 feet gain temporary hit points.\nPerfect Strike: your next attack this turn cannot miss.\nGuardian's Leap: move up to your speed to interpose yourself and take a hit meant for an ally.",
+        "villainous": "Ruthless Blow: deal extra damage and knock the target prone.\nTerrifying Presence: creatures of your choice must save or be frightened.\nSacrifice the Weak: redirect an attack onto a nearby creature.\nUnholy Resilience: ignore the next source of damage this round."
+      },
+      "ExamplesTitle": "Need inspiration? Examples",
+      "Field": {
+        "Name": "Ability Name",
+        "Description": "What does the ability do?",
+        "DescriptionHint": "Plain text only. Describe the effect as you would explain it at the table.",
+        "Mode": "Mode",
+        "ModeHint": "Manual: the module posts the description and you resolve it with the GM. Automated: build the effect from supported mechanics below.",
+        "Activation": "Activation",
+        "ConditionPlaceholder": "Trigger or timing (e.g. when an ally drops to 0 HP)",
+        "Condition": "Trigger",
+        "Target": "Target",
+        "Range": "Range",
+        "Duration": "Duration",
+        "Cost": "Cost (actions)",
+        "CostHint": "Number of actions spent per activation (1–3).",
+        "Label": "Label (optional)",
+        "Rounds": "Rounds",
+        "PromptTitle": "Question",
+        "PromptOptions": "Options separated by |",
+        "NoteText": "Note text"
+      },
+      "MechanicsTitle": "Structured Mechanics",
+      "MechanicsHint": "Each mechanic runs with trusted module code. Damage, healing, saves and checks are posted as clickable dnd5e roll links; healing, temporary hit points and conditions apply to your current targets.",
+      "ApprovalNotice": "The GM must approve automated mechanics before this ability can be used.",
+      "ManualNotice": "This is a manual ability: the module will display its description and spend the resource, but it will not enforce its rules automatically.",
+      "AddMechanic": "Add mechanic",
+      "RemoveMechanic": "Remove mechanic",
+      "Review": "Review",
+      "Save": "Save ability",
+      "Back": "Back",
+      "ReviewHint": "Saving stores the definition on the character. You will be asked to confirm before any resource is spent."
+    },
+    "Activate": {
+      "Title": "Use {ability}?",
+      "Confirm": "Activate",
+      "ManualNotice": "Manual ability: the module posts the description; resolve the effect with the GM.",
+      "Targets": "Targets",
+      "CostLine": "This will spend {cost} {pool} ({remaining} remaining afterwards)."
+    },
+    "Mechanic": {
+      "damage": "Roll damage",
+      "heal": "Heal",
+      "tempHp": "Grant temporary HP",
+      "save": "Force a saving throw",
+      "check": "Call for a check",
+      "applyCondition": "Apply condition: {status}",
+      "removeCondition": "Remove condition: {status}",
+      "template": "Create a template",
+      "prompt": "Choice prompt",
+      "note": "Note"
+    },
+    "MechanicPreview": {
+      "damage": "Roll {formula} {type} damage (posted as a dnd5e damage link).",
+      "heal": "Heal {formula} hit points to targets (or post a healing link).",
+      "tempHp": "Grant {formula} temporary hit points to targets (or self).",
+      "save": "Force a {ability} saving throw (DC {dc}).",
+      "check": "Call for a {ability} check ({skill}) DC {dc}.",
+      "applyCondition": "Apply the {status} condition to targets (or self) for {rounds} rounds.",
+      "removeCondition": "Remove the {status} condition from targets (or self).",
+      "template": "Place a {shape} template of {distance} ft at the token.",
+      "prompt": "Ask the player to choose: {options}.",
+      "note": "Note: {text}"
+    },
+    "Validation": {
+      "ability.invalid": "Invalid definition.",
+      "ability.name": "Enter an ability name (at least 2 characters).",
+      "ability.description": "Describe what the ability does (at least 10 characters).",
+      "ability.cost": "The cost must be between 1 and 3.",
+      "ability.noMechanics": "Automated abilities need at least one mechanic.",
+      "ability.tooManyMechanics": "At most 8 mechanics are allowed.",
+      "mechanic.invalid": "A mechanic is invalid.",
+      "mechanic.unsupportedType": "Unsupported mechanic type.",
+      "mechanic.formula": "Enter a valid dice formula (e.g. 2d6+3).",
+      "mechanic.damageType": "Unknown damage type.",
+      "mechanic.ability": "Choose an ability score.",
+      "mechanic.dc": "The DC must be between 1 and 40.",
+      "mechanic.skill": "Unknown skill.",
+      "mechanic.status": "Choose a known condition.",
+      "mechanic.shape": "Choose a template shape.",
+      "mechanic.distance": "Enter a distance between 1 and 1000 ft.",
+      "mechanic.promptOptions": "A choice prompt needs at least two options.",
+      "mechanic.note": "Enter the note text."
+    },
+    "Errors": {
+      "UnsupportedActor": "This actor type cannot hold Heroic or Villainous Actions.",
+      "CannotUpdateActor": "You do not have permission to modify this actor's resources.",
+      "GMOnly": "Only a Gamemaster can do that.",
+      "CannotEditAbility": "You do not have permission to edit this ability.",
+      "CannotActivate": "You do not have permission to use this actor's abilities.",
+      "NoResource": "No {pool} available.",
+      "InvalidDefinition": "The ability definition is invalid: {errors}",
+      "ExecutionFailed": "The ability could not be executed: {error}. The resource was refunded.",
+      "UnsupportedMechanic": "Unsupported mechanic: {type}",
+      "PromptCancelled": "The choice prompt was cancelled."
+    },
+    "Notifications": {
+      "AppliedForUser": "Applied an ability effect for {user} to {actor}."
+    },
+    "History": {
+      "award": "Earned",
+      "blocked": "Blocked (full)",
+      "spend": "Spent",
+      "refund": "Refunded",
+      "adjust": "GM adjustment",
+      "reset": "Reset",
+      "override": "GM override",
+      "Time": "Time",
+      "Kind": "Event",
+      "Pool": "Pool",
+      "After": "After",
+      "User": "User",
+      "Note": "Note",
+      "Empty": "No history yet."
+    },
+    "Diag": {
+      "notD20Test": "Not a d20 test",
+      "noActor": "No actor",
+      "actorExcluded": "Actor excluded",
+      "categoryDisabled": "Category disabled",
+      "outsideCombat": "Outside combat",
+      "notQualifying": "No natural 1/20",
+      "duplicate": "Duplicate",
+      "noPermission": "No permission",
+      "delegated": "Sent to GM",
+      "awarded": "Awarded",
+      "blocked": "Blocked (full)",
+      "error": "Error",
+      "appliedForUser": "Applied for user",
+      "unknown": "Unknown"
+    },
+    "Panel": {
+      "Title": "Heroic & Villainous Actions",
+      "TitleFor": "Heroic & Villainous — {actor}",
+      "NoActor": "Select a token or assign a character to see its Heroic and Villainous Actions.",
+      "FollowingSelection": "Following the selected token.",
+      "OpenSheet": "Open character sheet",
+      "Undefined": {
+        "heroic": "No Heroic Action defined yet. You will be prompted the first time you use one.",
+        "villainous": "No Villainous Action defined yet. You will be prompted the first time you use one."
+      },
+      "Use": "Use",
+      "Define": "Define",
+      "Edit": "Edit",
+      "Clear": "Clear",
+      "Approve": "Approve",
+      "Revoke": "Revoke approval",
+      "ClearTitle": "Clear ability definition",
+      "ClearConfirm": "Remove this ability definition? Resources are kept.",
+      "History": "History"
+    },
+    "Sheet": {
+      "Title": "Heroic & Villainous",
+      "Undefined": "Undefined",
+      "OpenPanel": "Open Heroic & Villainous Actions"
+    },
+    "GM": {
+      "Title": "Heroic & Villainous — GM Management",
+      "Tab": {
+        "Actors": "Actors",
+        "Diagnostics": "Roll diagnostics"
+      },
+      "ActorsHint": "Adjust pools with − / +, or type a value and save. The maximum is {max} per pool.",
+      "OverrideOn": "Administrative override is enabled: values above the maximum are allowed and logged.",
+      "IncludeNPCs": "Include NPCs",
+      "Last": "Last event",
+      "Set": "Save value",
+      "Reset": "Reset both pools",
+      "OpenPanel": "Open action panel",
+      "Undefined": "Undefined",
+      "DiagnosticsHint": "Recent roll decisions observed on this client (newest first). Hover an entry for the full record.",
+      "DiagnosticsOff": "Enable the Diagnostics Logging setting for console output.",
+      "ClearDiagnostics": "Clear",
+      "NoDiagnostics": "No rolls observed yet."
+    },
+    "Help": {
+      "Title": "Heroic & Villainous Actions — Rules Reference",
+      "RulesTitle": "Core rules",
+      "Rules": "A natural 20 on a qualifying d20 test earns one Heroic Action; a natural 1 earns one Villainous Action. The die face is what matters, never the modified total. Each pool holds at most three; a full pool ignores further awards. Activating an ability costs one action by default and never more than the character holds. Cancelling any dialog never spends a resource.",
+      "Current": "Current setting",
+      "AdvantageTitle": "Advantage & disadvantage",
+      "Advantage": {
+        "selected": "Only the die used for the outcome counts. Advantage rolling 1 and 20 and keeping 20 earns a Heroic Action; disadvantage keeping the 1 earns a Villainous Action. Unselected dice never award. Recommended default.",
+        "any": "Every d20 in the roll counts, including discarded dice. A roll showing both 1 and 20 earns one of each. More generous and more random.",
+        "ordinaryOnly": "Rolls made with advantage or disadvantage never award. Strict and easy to adjudicate."
+      },
+      "RerollTitle": "Rerolls",
+      "Reroll": {
+        "final": "Dice replaced by a reroll (Halfling Lucky, Lucky feat rerolls processed by the system) are ignored; the final kept die decides. No roll awards twice.",
+        "excludeRerolled": "Any roll in which the primary d20 was rerolled never awards."
+      },
+      "ActivationTitle": "Activation policies",
+      "Activation": {
+        "flexible": "Each ability's own activation type and trigger apply. Reactions and special activations can be used off-turn; others are expected on the character's turn, enforced at the table.",
+        "legendary": "Off-turn activation is allowed only for abilities whose activation is Reaction or Special, limited to the configured number of uses per round (as Legendary Actions are limited per turn cycle). On the character's own turn any ability may be used.",
+        "turnBound": "Abilities may only be used on the character's own turn unless their activation type is Reaction or Special.",
+        "gmControlled": "Every activation is sent to the active GM for approval before the resource is spent."
+      },
+      "Economy": "Spending a Heroic or Villainous Action never grants an extra ordinary action, bonus action or reaction: the ability's activation type states what it consumes. An ability with the Reaction type uses the character's reaction; one with the Special type is an extra, Legendary-style activation that interrupts the normal turn order and should define its trigger. Opportunity attacks and concentration follow the normal rules.",
+      "ModesTitle": "Manual and automated abilities",
+      "Modes": "Manual abilities are descriptions: the module posts them to chat and spends the resource, and the table resolves the effect. Automated abilities are built from supported mechanics (damage and healing links, saves, checks, temporary HP, conditions, templates, prompts) executed by trusted module code. Player-written text is never executed as code.",
+      "PermissionsTitle": "Permissions",
+      "Permissions": "Owners may use and define abilities for their actors. Editing after the first definition can be restricted to the GM. Only the GM can adjust counts, reset pools, approve automation or exceed the cap (with the override setting, which is logged). World settings cannot be changed by players."
+    },
+    "Keybind": {
+      "OpenPanel": "Open the action panel",
+      "OpenPanelHint": "Opens the Heroic & Villainous Actions panel for the selected token or your character."
+    }
+  }
+}

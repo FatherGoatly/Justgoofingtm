@@ -1,0 +1,131 @@
+<div class="hva-define-body {{pool}}">
+  {{#if (eq step "edit")}}
+  <p class="hva-prompt"><i class="{{#if isHeroic}}fa-solid fa-sun{{else}}fa-solid fa-skull{{/if}}"></i> {{prompt}}</p>
+  {{#if examples.length}}
+  <details class="hva-examples">
+    <summary>{{localize "HVA.Define.ExamplesTitle"}}</summary>
+    <ul>{{#each examples}}<li>{{this}}</li>{{/each}}</ul>
+  </details>
+  {{/if}}
+  {{#if errors.length}}
+  <ul class="hva-errors">{{#each errors}}<li><i class="fa-solid fa-triangle-exclamation"></i> {{this}}</li>{{/each}}</ul>
+  {{/if}}
+
+  <div class="form-group">
+    <label>{{localize "HVA.Define.Field.Name"}}</label>
+    <div class="form-fields"><input type="text" name="name" value="{{raw.name}}" maxlength="{{limits.name}}" required></div>
+  </div>
+  <div class="form-group stacked">
+    <label>{{localize "HVA.Define.Field.Description"}}</label>
+    <div class="form-fields"><textarea name="description" rows="5" maxlength="{{limits.description}}" required>{{raw.description}}</textarea></div>
+    <p class="hint">{{localize "HVA.Define.Field.DescriptionHint"}}</p>
+  </div>
+  <div class="form-group">
+    <label>{{localize "HVA.Define.Field.Mode"}}</label>
+    <div class="form-fields">
+      <select name="mode">{{#each modes}}<option value="{{value}}" {{#if (eq value @root.raw.mode)}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+    </div>
+    <p class="hint">{{localize "HVA.Define.Field.ModeHint"}}</p>
+  </div>
+  <div class="form-group">
+    <label>{{localize "HVA.Define.Field.Activation"}}</label>
+    <div class="form-fields">
+      <select name="activation.type">{{#each activationTypes}}<option value="{{value}}" {{#if (eq value @root.raw.activation.type)}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+      <input type="text" name="activation.condition" value="{{raw.activation.condition}}" placeholder="{{localize 'HVA.Define.Field.ConditionPlaceholder'}}" maxlength="{{limits.shortField}}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>{{localize "HVA.Define.Field.Target"}}</label>
+    <div class="form-fields"><input type="text" name="target" value="{{raw.target}}" maxlength="{{limits.shortField}}"></div>
+  </div>
+  <div class="form-group">
+    <label>{{localize "HVA.Define.Field.Range"}}</label>
+    <div class="form-fields">
+      <input type="text" name="range" value="{{raw.range}}" maxlength="{{limits.shortField}}">
+      <label>{{localize "HVA.Define.Field.Duration"}}</label>
+      <input type="text" name="duration" value="{{raw.duration}}" maxlength="{{limits.shortField}}">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>{{localize "HVA.Define.Field.Cost"}}</label>
+    <div class="form-fields"><input type="number" name="cost" value="{{raw.cost}}" min="1" max="{{maxCost}}" step="1"></div>
+    <p class="hint">{{localize "HVA.Define.Field.CostHint"}}</p>
+  </div>
+
+  {{#if isAutomated}}
+  <fieldset class="hva-mechanics">
+    <legend>{{localize "HVA.Define.MechanicsTitle"}}</legend>
+    <p class="hint">{{localize "HVA.Define.MechanicsHint"}}</p>
+    {{#if requireApproval}}<p class="notification info">{{localize "HVA.Define.ApprovalNotice"}}</p>{{/if}}
+    {{#each mechanics}}
+    <div class="hva-mechanic-row" data-index="{{index}}">
+      <select name="mechanics.{{index}}.type">
+        {{#each @root.mechanicTypes}}<option value="{{value}}" {{#if (eq value ../type)}}selected{{/if}}>{{label}}</option>{{/each}}
+      </select>
+      <input type="text" name="mechanics.{{index}}.label" value="{{label}}" placeholder="{{localize 'HVA.Define.Field.Label'}}" maxlength="{{@root.limits.shortField}}">
+      {{#if (or (eq type "damage") (eq type "heal") (eq type "tempHp"))}}
+      <input type="text" name="mechanics.{{index}}.formula" value="{{formula}}" placeholder="2d6" maxlength="{{@root.limits.formula}}">
+      {{/if}}
+      {{#if (eq type "damage")}}
+      <select name="mechanics.{{index}}.damageType"><option value="">—</option>{{#each @root.damageTypes}}<option value="{{value}}" {{#if (eq value ../damageType)}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+      {{/if}}
+      {{#if (or (eq type "save") (eq type "check"))}}
+      <select name="mechanics.{{index}}.ability">{{#each @root.abilities}}<option value="{{value}}" {{#if (eq value ../ability)}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+      {{#if (eq type "check")}}
+      <select name="mechanics.{{index}}.skill"><option value="">—</option>{{#each @root.skills}}<option value="{{value}}" {{#if (eq value ../skill)}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+      {{/if}}
+      <input type="number" name="mechanics.{{index}}.dc" value="{{dc}}" placeholder="DC" min="1" max="40">
+      {{/if}}
+      {{#if (or (eq type "applyCondition") (eq type "removeCondition"))}}
+      <select name="mechanics.{{index}}.status">{{#each @root.statuses}}<option value="{{value}}" {{#if (eq value ../status)}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+      {{#if (eq type "applyCondition")}}<input type="number" name="mechanics.{{index}}.rounds" value="{{rounds}}" placeholder="{{localize 'HVA.Define.Field.Rounds'}}" min="1" max="100">{{/if}}
+      {{/if}}
+      {{#if (eq type "template")}}
+      <select name="mechanics.{{index}}.shape">{{#each @root.templateTypes}}<option value="{{value}}" {{#if (eq value ../shape)}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+      <input type="number" name="mechanics.{{index}}.distance" value="{{distance}}" placeholder="ft" min="1" max="1000">
+      {{/if}}
+      {{#if (eq type "prompt")}}
+      <input type="text" name="mechanics.{{index}}.title" value="{{title}}" placeholder="{{localize 'HVA.Define.Field.PromptTitle'}}" maxlength="{{@root.limits.shortField}}">
+      <input type="text" name="mechanics.{{index}}.options" value="{{#if options}}{{#each options}}{{this}}{{#unless @last}} | {{/unless}}{{/each}}{{/if}}" placeholder="{{localize 'HVA.Define.Field.PromptOptions'}}">
+      {{/if}}
+      {{#if (eq type "note")}}
+      <input type="text" name="mechanics.{{index}}.text" value="{{text}}" placeholder="{{localize 'HVA.Define.Field.NoteText'}}" maxlength="{{@root.limits.shortField}}">
+      {{/if}}
+      <button type="button" class="icon fa-solid fa-trash" data-action="removeMechanic" data-index="{{index}}" data-tooltip="HVA.Define.RemoveMechanic" aria-label="{{localize 'HVA.Define.RemoveMechanic'}}"></button>
+    </div>
+    {{/each}}
+    <button type="button" data-action="addMechanic"><i class="fa-solid fa-plus"></i> {{localize "HVA.Define.AddMechanic"}}</button>
+  </fieldset>
+  {{/if}}
+
+  {{else}}
+  <div class="hva-preview">
+    <h3><i class="{{#if isHeroic}}fa-solid fa-sun{{else}}fa-solid fa-skull{{/if}}"></i> {{draft.name}}</h3>
+    <p class="hva-badges">
+      <span class="hva-badge mode-{{draft.mode}}">{{localize (concat "HVA.Mode." draft.mode)}}</span>
+      <span class="hva-badge">{{localize (concat "HVA.Activation." draft.activation.type)}}</span>
+      <span class="hva-badge">{{localize "HVA.Cost"}}: {{draft.cost}} {{poolLabel}}</span>
+    </p>
+    <div class="hva-description">{{#each (hva-split draft.description)}}<p>{{this}}</p>{{/each}}</div>
+    <dl class="hva-details">
+      {{#if draft.activation.condition}}<dt>{{localize "HVA.Define.Field.Condition"}}</dt><dd>{{draft.activation.condition}}</dd>{{/if}}
+      {{#if draft.target}}<dt>{{localize "HVA.Define.Field.Target"}}</dt><dd>{{draft.target}}</dd>{{/if}}
+      {{#if draft.range}}<dt>{{localize "HVA.Define.Field.Range"}}</dt><dd>{{draft.range}}</dd>{{/if}}
+      {{#if draft.duration}}<dt>{{localize "HVA.Define.Field.Duration"}}</dt><dd>{{draft.duration}}</dd>{{/if}}
+    </dl>
+    {{#if previewMechanics.length}}
+    <h4>{{localize "HVA.Define.MechanicsTitle"}}</h4>
+    <ol>{{#each previewMechanics}}<li>{{this}}</li>{{/each}}</ol>
+    {{#if requireApproval}}<p class="notification warning">{{localize "HVA.Define.ApprovalNotice"}}</p>{{/if}}
+    {{else}}
+    <p class="hint">{{localize "HVA.Define.ManualNotice"}}</p>
+    {{/if}}
+    <p class="hint">{{localize "HVA.Define.ReviewHint"}}</p>
+  </div>
+  {{/if}}
+</div>
+<footer class="form-footer">
+  {{#each buttons}}
+  <button type="{{type}}" {{#if action}}data-action="{{action}}"{{/if}}><i class="{{icon}}"></i> {{localize label}}</button>
+  {{/each}}
+</footer>

@@ -1,0 +1,58 @@
+{{#if noActor}}
+<p class="hva-empty">{{localize "HVA.Panel.NoActor"}}</p>
+{{else}}
+<div class="hva-actor">
+  <img src="{{img}}" alt="{{actor.name}}">
+  <div>
+    <h2>{{actor.name}}</h2>
+    {{#if followSelection}}<span class="hint">{{localize "HVA.Panel.FollowingSelection"}}</span>{{/if}}
+  </div>
+  <button type="button" data-action="openSheet" data-tooltip="HVA.Panel.OpenSheet" style="margin-left:auto;width:auto"><i class="fa-solid fa-user"></i></button>
+</div>
+<div class="hva-pools">
+  {{#each pools}}
+  <section class="hva-pool-card {{pool}}">
+    <h3><i class="{{icon}}"></i> {{label}}</h3>
+    <div class="hva-counter {{pool}}" aria-label="{{label}}: {{count}} / {{max}}">
+      <span class="hva-pips">{{#each pips}}<span class="hva-pip {{#if filled}}filled{{/if}}"></span>{{/each}}</span>
+      <span class="hva-count-text">{{count}} / {{max}}</span>
+    </div>
+    {{#if defined}}
+    <div class="hva-ability-title">{{ability.name}}</div>
+    <div class="hva-badges">
+      <span class="hva-badge mode-{{ability.mode}}">{{modeLabel}}</span>
+      <span class="hva-badge">{{activationLabel}}</span>
+      {{#if (ne approval "notRequired")}}<span class="hva-badge approval-{{approval}}">{{approvalLabel}}</span>{{/if}}
+      <span class="hva-badge">{{localize "HVA.Cost"}}: {{ability.cost}}</span>
+    </div>
+    <div class="hva-description">{{#each descriptionLines}}<p>{{this}}</p>{{/each}}</div>
+    {{else}}
+    <p class="hva-undefined">{{localize (concat "HVA.Panel.Undefined." pool)}}</p>
+    {{/if}}
+    <div class="hva-controls">
+      {{#if canActivate}}<button type="button" data-action="activate" data-pool="{{pool}}"><i class="{{icon}}"></i> {{localize "HVA.Panel.Use"}}</button>{{/if}}
+      {{#if canDefine}}<button type="button" data-action="define" data-pool="{{pool}}"><i class="fa-solid fa-pen"></i> {{localize "HVA.Panel.Define"}}</button>{{/if}}
+      {{#if canEdit}}<button type="button" data-action="edit" data-pool="{{pool}}"><i class="fa-solid fa-pen-to-square"></i> {{localize "HVA.Panel.Edit"}}</button>{{/if}}
+      {{#if canEdit}}<button type="button" data-action="clear" data-pool="{{pool}}"><i class="fa-solid fa-eraser"></i> {{localize "HVA.Panel.Clear"}}</button>{{/if}}
+      {{#if canApprove}}<button type="button" data-action="approve" data-pool="{{pool}}"><i class="fa-solid fa-check"></i> {{localize "HVA.Panel.Approve"}}</button>{{/if}}
+      {{#if canReject}}<button type="button" data-action="reject" data-pool="{{pool}}"><i class="fa-solid fa-ban"></i> {{localize "HVA.Panel.Revoke"}}</button>{{/if}}
+    </div>
+  </section>
+  {{/each}}
+</div>
+<div class="hva-history">
+  <button type="button" data-action="toggleHistory" style="width:auto"><i class="fa-solid fa-clock-rotate-left"></i> {{localize "HVA.Panel.History"}}</button>
+  {{#if showHistory}}
+  {{#if history.length}}
+  <table>
+    <thead><tr><th>{{localize "HVA.History.Time"}}</th><th>{{localize "HVA.History.Kind"}}</th><th>{{localize "HVA.History.Pool"}}</th><th>Δ</th><th>{{localize "HVA.History.After"}}</th><th>{{localize "HVA.History.User"}}</th><th>{{localize "HVA.History.Note"}}</th></tr></thead>
+    <tbody>
+      {{#each history}}
+      <tr><td>{{time}}</td><td>{{kindLabel}}</td><td>{{poolLabel}}</td><td>{{delta}}</td><td>{{after}}</td><td>{{userName}}</td><td>{{note}}</td></tr>
+      {{/each}}
+    </tbody>
+  </table>
+  {{else}}<p class="hva-empty">{{localize "HVA.History.Empty"}}</p>{{/if}}
+  {{/if}}
+</div>
+{{/if}}

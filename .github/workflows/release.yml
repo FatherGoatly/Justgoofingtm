@@ -1,0 +1,28 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run validate
+      - run: npm test
+      - name: Check tag matches manifest version
+        run: |
+          V=$(node -p "require('./module.json').version")
+          [ "refs/tags/v$V" = "$GITHUB_REF" ] || { echo "Tag $GITHUB_REF does not match module.json version $V"; exit 1; }
+      - run: npm run package
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/heroic-villainous-actions.zip
+            dist/module.json
