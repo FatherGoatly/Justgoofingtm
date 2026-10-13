@@ -1,0 +1,37 @@
+<section class="tab scrollable {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  <div class="form-group">
+    <label>{{localize "SBI.Options.Destination"}}</label>
+    <select name="destination">{{#each destinations}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+  </div>
+  <div class="form-group">
+    <label>{{localize "SBI.Options.Actor"}}</label>
+    <select name="actorId"><option value="">—</option>{{#each actors}}<option value="{{id}}" {{#if selected}}selected{{/if}}>{{name}}</option>{{/each}}</select>
+    <p class="hint">Used when the destination is an existing Actor. Only Actors you own are listed.</p>
+  </div>
+  {{#if user.isGM}}
+  <div class="form-group">
+    <label>{{localize "SBI.Options.Folder"}}</label>
+    <input type="text" name="folderName" value="{{state.folderName}}" placeholder="(none)">
+  </div>
+  {{/if}}
+  <div class="form-group">
+    <label>{{localize "SBI.Options.Duplicates"}}</label>
+    <select name="duplicatePolicy">{{#each duplicatePolicies}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}</select>
+  </div>
+  <div class="form-group">
+    <label>{{localize "SBI.Options.Automation"}}</label>
+    <input type="checkbox" name="automation" {{#if state.automation}}checked{{/if}}>
+    <p class="hint">When off, documents are created with data and descriptions only; no mechanics are attached.</p>
+  </div>
+  <div class="form-group">
+    <label>{{localize "SBI.Options.Macros"}}</label>
+    <input type="checkbox" name="macros" {{#if state.macros}}checked{{/if}} {{#unless canMacros}}disabled{{/unless}}>
+    <p class="hint">Small wrapper macros for interactive mechanics (teleport). Requires the GM macro policy to allow it.</p>
+  </div>
+  {{#if compat}}
+  <h3>Integrations</h3>
+  <table class="sbi-compat"><thead><tr><th>Module</th><th>Installed</th><th>Version</th><th>Active</th><th>Notes</th></tr></thead><tbody>
+  {{#each compat.integrations}}<tr><td>{{name}}</td><td>{{#if installed}}yes{{else}}no{{/if}}</td><td>{{version}}</td><td>{{#if active}}<i class="fa-solid fa-check"></i>{{else}}—{{/if}}</td><td class="hint">{{#each notes}}{{this}} {{/each}}</td></tr>{{/each}}
+  </tbody></table>
+  {{/if}}
+</section>

@@ -1,0 +1,36 @@
+.stat-block-importer .window-content { display: flex; flex-direction: column; gap: 0.5rem; }
+.stat-block-importer .tab { flex: 1; overflow: auto; padding: 0.25rem 0.5rem; }
+.stat-block-importer textarea[name="text"] { width: 100%; min-height: 18rem; font-family: var(--font-monospace, monospace); font-size: 0.85rem; }
+.stat-block-importer .sbi-actions { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
+.stat-block-importer .sbi-summary { display: flex; flex-wrap: wrap; gap: 0.75rem; padding: 0.5rem; border: 1px solid var(--color-border-light-primary, #999); border-radius: 4px; margin-bottom: 0.5rem; }
+.stat-block-importer .sbi-summary .error { color: var(--color-level-error, #c00); }
+.stat-block-importer .sbi-entry { border: 1px solid var(--color-border-light-primary, #999); border-radius: 4px; padding: 0.25rem 0.5rem; margin-bottom: 0.5rem; }
+.stat-block-importer .sbi-entry.invalid { border-color: var(--color-level-error, #c00); }
+.stat-block-importer .sbi-entry summary { cursor: pointer; }
+.stat-block-importer table.sbi-stats th { text-align: left; width: 8rem; font-weight: 600; }
+.stat-block-importer table.sbi-mechanics { width: 100%; font-size: 0.85rem; }
+.stat-block-importer table.sbi-mechanics th, .stat-block-importer table.sbi-mechanics td { vertical-align: top; padding: 0.2rem 0.3rem; }
+.stat-block-importer tr.review { background: color-mix(in srgb, orange 15%, transparent); }
+.stat-block-importer tr.disabled { opacity: 0.55; }
+.stat-block-importer .tag { display: inline-block; padding: 0 0.4rem; border-radius: 3px; font-size: 0.75rem; background: var(--color-bg-option, #ddd); border: 1px solid var(--color-border-light-primary, #999); }
+.stat-block-importer .tag.warning { background: color-mix(in srgb, orange 35%, transparent); }
+.stat-block-importer .tag.ok { background: color-mix(in srgb, green 30%, transparent); }
+.stat-block-importer .tag.category-native { background: color-mix(in srgb, green 25%, transparent); }
+.stat-block-importer .tag.category-declarative { background: color-mix(in srgb, teal 25%, transparent); }
+.stat-block-importer .tag.category-integration { background: color-mix(in srgb, blue 25%, transparent); }
+.stat-block-importer .tag.category-module { background: color-mix(in srgb, purple 25%, transparent); }
+.stat-block-importer .tag.category-interactive { background: color-mix(in srgb, gold 35%, transparent); }
+.stat-block-importer .tag.category-unresolved { background: color-mix(in srgb, red 20%, transparent); }
+.stat-block-importer .tag.confidence-high { background: color-mix(in srgb, green 25%, transparent); }
+.stat-block-importer .tag.confidence-medium { background: color-mix(in srgb, orange 25%, transparent); }
+.stat-block-importer .tag.confidence-low, .stat-block-importer .tag.confidence-none { background: color-mix(in srgb, red 20%, transparent); }
+.stat-block-importer .tag.status-complete { background: color-mix(in srgb, green 30%, transparent); }
+.stat-block-importer .tag.status-failed, .stat-block-importer .tag.status-rejected { background: color-mix(in srgb, red 30%, transparent); }
+.stat-block-importer ul.errors li { color: var(--color-level-error, #c00); }
+.stat-block-importer ul.warnings li { color: var(--color-level-warning, #a60); }
+.stat-block-importer li.error { color: var(--color-level-error, #c00); }
+.stat-block-importer li.warn { color: var(--color-level-warning, #a60); }
+.stat-block-importer .hint { font-size: 0.8rem; opacity: 0.8; }
+.stat-block-importer button.icon { padding: 0 0.3rem; line-height: 1.4; }
+.stat-block-importer .sbi-docs a { cursor: pointer; }
+.stat-block-importer-open { flex: 0 0 auto; }

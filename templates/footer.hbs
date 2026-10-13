@@ -1,0 +1,4 @@
+<footer class="form-footer">
+  <button type="button" data-action="parse" {{#if state.busy}}disabled{{/if}}><i class="fa-solid fa-magnifying-glass"></i> {{localize "SBI.Source.Parse"}}</button>
+  <button type="button" data-action="import" {{#if state.busy}}disabled{{/if}} {{#unless state.bundle}}disabled{{/unless}}><i class="fa-solid fa-file-import"></i> {{#if state.busy}}{{localize "SBI.Import.Running"}}{{else}}{{localize "SBI.Import.Run"}}{{/if}}</button>
+</footer>

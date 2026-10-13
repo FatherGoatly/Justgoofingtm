@@ -1,0 +1,21 @@
+{
+  "name": "stat-block-importer",
+  "version": "0.1.0",
+  "description": "Universal stat block importer and automation engine for Foundry VTT V14 and the D&D 5e system (v6.x).",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "validate:manifest": "node utils/validate-manifest.mjs",
+    "package": "node utils/package.mjs"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
+    "vitest": "^5.0.4"
+  }
+}

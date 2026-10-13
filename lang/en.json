@@ -1,0 +1,113 @@
+{
+  "SBI": {
+    "Title": "Stat Block Importer",
+    "Open": "Import Stat Block",
+    "Settings": {
+      "AllowPlayerImport": { "Name": "Allow player imports", "Hint": "Players may open the importer and import content into destinations they own." },
+      "PlayerDestinations": {
+        "Name": "Player destinations", "Hint": "Where players may import to. Owned Actors, a GM-controlled staging folder, or both.",
+        "Owned": "Owned Actors only", "Staging": "Staging folder only", "Both": "Owned Actors and staging folder"
+      },
+      "AllowedFormats": { "Name": "Allowed input formats", "Hint": "Comma-separated list of input formats: text, markdown, html, json-schema, foundry-export, csv." },
+      "MaxInputSize": { "Name": "Maximum input size (characters)", "Hint": "Pasted or uploaded text larger than this is rejected." },
+      "MaxBatchSize": { "Name": "Maximum batch size", "Hint": "Maximum number of documents a single import may create." },
+      "AutomationEnabled": { "Name": "Generate automation", "Hint": "Interpret descriptions and attach validated automation. When disabled, imports contain data and descriptions only." },
+      "UseNativeMechanics": { "Name": "Prefer native D&D 5e mechanics", "Hint": "Use system activities, uses and effects before any optional integration." },
+      "Integrations": { "Name": "Enabled integrations", "Hint": "Comma-separated module ids whose integration adapters may be used when installed." },
+      "MacroPolicy": {
+        "Name": "Macro creation policy", "Hint": "Who may have interactive macros generated for them. Generated macros are small wrappers that call the module runtime.",
+        "Never": "Never create macros", "GMOnly": "GM only", "Owners": "GM and users with script macro permission"
+      },
+      "ReviewPolicy": {
+        "Name": "Mechanic review policy", "Hint": "When to require explicit confirmation of interpreted mechanics before import.",
+        "Always": "Review every mechanic", "Ambiguous": "Review ambiguous mechanics only", "Never": "Never block on review (unresolved mechanics stay disabled)"
+      },
+      "DuplicatePolicy": {
+        "Name": "Default duplicate handling", "Hint": "What happens when an import matches an existing document.",
+        "Ask": "Ask", "Create": "Create a new copy", "Skip": "Skip existing", "Update": "Update existing", "Merge": "Merge supported fields"
+      },
+      "StagingFolder": { "Name": "Staging folder name", "Hint": "Folder used for GM-reviewed player imports." },
+      "LogImports": { "Name": "Log imports", "Hint": "Record import reports in the diagnostics log." },
+      "LogLevel": { "Name": "Diagnostic detail", "Hint": "Console logging level.", "Error": "Errors", "Warn": "Warnings", "Info": "Information", "Debug": "Debug" },
+      "DebugMode": { "Name": "Debug mode", "Hint": "Verbose logging and extra validation output." },
+      "AllowHtmlInput": { "Name": "Allow HTML input", "Hint": "Accept pasted or uploaded HTML (always sanitized)." },
+      "OcrEnabled": { "Name": "Enable OCR input", "Hint": "Allow image input through an OCR provider configured by the GM. No provider is bundled." },
+      "LastTab": { "Name": "Last tab", "Hint": "" }
+    },
+    "Permission": {
+      "NoUser": "No active user.",
+      "PlayersDisabled": "The GM has disabled player imports.",
+      "NoActor": "No destination Actor was selected.",
+      "NotActorOwner": "You do not own the selected Actor.",
+      "NoWorldCreate": "You may not create world documents.",
+      "NoStaging": "The staging destination is not available to you.",
+      "GMOnly": "Only a Gamemaster may use this destination.",
+      "UnknownDestination": "Unknown destination."
+    },
+    "Tabs": { "Source": "Source", "Preview": "Preview", "Options": "Options", "Report": "Report", "Diagnostics": "Diagnostics" },
+    "Source": {
+      "Paste": "Paste a stat block, Markdown, JSON or HTML",
+      "Upload": "Or upload a file (.txt, .md, .json, .csv, .html)",
+      "Detected": "Detected format",
+      "Parse": "Parse & Preview",
+      "Placeholder": "Goblin\nSmall humanoid (goblinoid), neutral evil\nArmor Class 15 (leather armor, shield)\nHit Points 7 (2d6)\n..."
+    },
+    "Preview": {
+      "Empty": "Nothing parsed yet.",
+      "Entries": "Documents to create",
+      "Mechanics": "Detected mechanics",
+      "Warnings": "Warnings",
+      "Confidence": "Confidence",
+      "Implementation": "Implementation",
+      "Enabled": "Enabled",
+      "ReviewRequired": "Needs review",
+      "Unsupported": "Unsupported (manual)",
+      "Requires": "Requires"
+    },
+    "Options": {
+      "Destination": "Destination",
+      "DestinationWorld": "World (sidebar)",
+      "DestinationActor": "Existing Actor",
+      "DestinationStaging": "Staging folder",
+      "Actor": "Target Actor",
+      "Duplicates": "Duplicates",
+      "Automation": "Attach automation",
+      "Macros": "Generate interactive macros",
+      "Folder": "Folder name"
+    },
+    "Import": {
+      "Run": "Import",
+      "Cancel": "Cancel",
+      "Running": "Importing…",
+      "Done": "Import complete",
+      "Failed": "Import failed",
+      "NothingToImport": "No valid entries to import.",
+      "BatchTooLarge": "This import exceeds the maximum batch size ({max}).",
+      "InputTooLarge": "Input exceeds the maximum size.",
+      "FormatNotAllowed": "The {format} input format is not enabled.",
+      "ReviewRequired": "Some mechanics require review before import. Disable them or resolve them in the preview."
+    },
+    "Report": {
+      "ActorsCreated": "Actors created",
+      "ItemsCreated": "Items created",
+      "ItemsEmbedded": "Items attached to existing Actors",
+      "EffectsCreated": "Effects configured",
+      "MacrosCreated": "Macros generated",
+      "MechanicsOk": "Mechanics implemented",
+      "MechanicsReview": "Mechanics requiring review",
+      "MechanicsUnsupported": "Unsupported mechanics (manual)",
+      "Errors": "Errors",
+      "Verified": "Verified",
+      "NotVerified": "Not verified",
+      "Skipped": "Skipped",
+      "Updated": "Updated"
+    },
+    "Mechanic": {
+      "Category": {
+        "native": "Native D&D 5e", "declarative": "Active Effect", "integration": "Integration", "module": "Module runtime",
+        "interactive": "Interactive macro", "unresolved": "Unresolved"
+      }
+    },
+    "Macro": { "Description": "Generated by Stat Block Importer for {item}. Calls the module runtime; safe to regenerate." }
+  }
+}

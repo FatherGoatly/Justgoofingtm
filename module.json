@@ -1,0 +1,47 @@
+{
+  "id": "stat-block-importer",
+  "title": "Stat Block Importer & Automation Engine (D&D 5e)",
+  "description": "Import character, creature, item, spell and magic item stat blocks from text, Markdown, JSON, Foundry exports, CSV, HTML and extracted document text into fully structured D&D 5e Actors and Items, with validated native automation, optional Midi-QOL / DAE / Convenient Effects integration, preview and review, and player-safe permissions.",
+  "version": "0.1.0",
+  "authors": [
+    { "name": "FatherGoatly" }
+  ],
+  "url": "https://github.com/FatherGoatly/Justgoofingtm",
+  "manifest": "https://github.com/FatherGoatly/Justgoofingtm/releases/latest/download/module.json",
+  "download": "https://github.com/FatherGoatly/Justgoofingtm/releases/latest/download/stat-block-importer.zip",
+  "compatibility": {
+    "minimum": "14.367",
+    "verified": "14.369",
+    "maximum": "14"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "manifest": "https://raw.githubusercontent.com/foundryvtt/dnd5e/master/system.json",
+        "compatibility": { "minimum": "6.0.0", "verified": "6.0.6", "maximum": "6" }
+      }
+    ],
+    "recommends": [
+      { "id": "midi-qol", "type": "module", "reason": "Automatic attack/damage workflow integration for on-hit mechanics." },
+      { "id": "dae", "type": "module", "reason": "Extended Active Effect keys and special durations." },
+      { "id": "dfreds-convenient-effects", "type": "module", "reason": "Shared condition and effect definitions." }
+    ]
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "styles": [
+    "styles/stat-block-importer.css"
+  ],
+  "languages": [
+    { "lang": "en", "name": "English", "path": "lang/en.json" }
+  ],
+  "flags": {
+    "hotReload": {
+      "extensions": ["css", "hbs", "json"],
+      "paths": ["styles", "templates", "lang"]
+    }
+  }
+}

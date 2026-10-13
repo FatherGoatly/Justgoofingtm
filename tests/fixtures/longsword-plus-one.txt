@@ -1,0 +1,3 @@
+Longsword +1
+Weapon (longsword), uncommon
+You have a +1 bonus to attack and damage rolls made with this magic weapon.

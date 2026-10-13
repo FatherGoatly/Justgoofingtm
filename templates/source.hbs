@@ -1,0 +1,22 @@
+<section class="tab scrollable {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  {{#if state.error}}<p class="notification error">{{state.error}}</p>{{/if}}
+  <div class="form-group stacked">
+    <label>{{localize "SBI.Source.Paste"}}</label>
+    <textarea name="text" rows="18" placeholder="{{localize "SBI.Source.Placeholder"}}">{{state.text}}</textarea>
+  </div>
+  <div class="form-group">
+    <label>{{localize "SBI.Source.Upload"}}</label>
+    <input type="file" name="upload" accept=".txt,.md,.markdown,.json,.csv,.html,.htm">
+  </div>
+  <div class="form-group">
+    <label>Content type</label>
+    <select name="contentKind">
+      {{#each contentKinds}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+    </select>
+    <p class="hint">{{localize "SBI.Source.Detected"}}: <span class="sbi-detected">{{#if formats}}{{formats.format}} / {{formats.contentKind}} ({{formats.confidence}}%){{/if}}</span></p>
+  </div>
+  <div class="sbi-actions">
+    <button type="button" data-action="parse" {{#if state.busy}}disabled{{/if}}><i class="fa-solid fa-magnifying-glass"></i> {{localize "SBI.Source.Parse"}}</button>
+    <button type="button" data-action="clear"><i class="fa-solid fa-eraser"></i> Clear</button>
+  </div>
+</section>

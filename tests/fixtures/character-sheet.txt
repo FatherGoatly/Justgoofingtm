@@ -1,0 +1,21 @@
+Name: Thalia Brightwood
+Species: Half-Elf
+Class: Fighter 5 (Battle Master) / Wizard 2
+Background: Soldier
+Alignment: Neutral Good
+Level: 7
+STR 16 DEX 14 CON 15 INT 13 WIS 10 CHA 12
+Saving Throws: Strength, Constitution
+Skills: Athletics, Perception (expertise), Intimidation
+Armor Class: 18
+Hit Points: 52 / 60
+Hit Dice: 5d10, 2d6
+Speed: 30 ft.
+Senses: darkvision 60 ft.
+Languages: Common, Elvish, Dwarvish
+Proficiencies: all armor, shields, simple weapons, martial weapons, smith's tools
+Currency: 25 gp, 12 sp
+Equipment: Longsword, Chain Mail, Shield, Potion of Healing x2, Flame Tongue Longsword
+Spells: Shield, Magic Missile, Fire Bolt
+Features: Second Wind, Action Surge, Extra Attack
+Feats: Sentinel

@@ -1,0 +1,4 @@
+name,type,damage,damage type,cost,weight,properties,description,quantity
+Longsword,Weapon (longsword),1d8,slashing,15 gp,3 lb.,versatile (1d10),A standard longsword.,1
+Chain Mail,Armor (chain mail),,,75 gp,55 lb.,,"Heavy armor, AC 16, Str 13, Stealth disadvantage.",1
+Rope (50 feet),Adventuring Gear,,,1 gp,10 lb.,,"Hempen rope, 50 feet.",2

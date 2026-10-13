@@ -1,0 +1,65 @@
+<section class="tab scrollable {{tab.cssClass}}" data-tab="{{tab.id}}" data-group="{{tab.group}}">
+  {{#unless preview}}<p class="hint">{{localize "SBI.Preview.Empty"}}</p>{{else}}
+  <div class="sbi-summary">
+    <span><strong>{{preview.summary.actors}}</strong> actors</span>
+    <span><strong>{{preview.summary.items}}</strong> items</span>
+    <span><strong>{{preview.summary.embeddedItems}}</strong> embedded</span>
+    <span><strong>{{preview.summary.effects}}</strong> effects</span>
+    <span><strong>{{preview.summary.mechanics.total}}</strong> mechanics ({{preview.summary.mechanics.native}} native, {{preview.summary.mechanics.declarative}} effects, {{preview.summary.mechanics.integration}} integration, {{preview.summary.mechanics.module}} module, {{preview.summary.mechanics.unresolved}} manual)</span>
+    <span class="{{#if preview.summary.errors}}error{{/if}}"><strong>{{preview.summary.errors}}</strong> errors / <strong>{{preview.summary.warnings}}</strong> warnings</span>
+  </div>
+  {{#if preview.review.length}}
+  <div class="notification warning">{{localize "SBI.Import.ReviewRequired"}} ({{preview.review.length}})</div>
+  {{/if}}
+  {{#each preview.entries as |entry|}}
+  <details class="sbi-entry {{#unless entry.valid}}invalid{{/unless}}" open>
+    <summary><i class="fa-solid {{#if (eq entry.kind "actor")}}fa-user{{else}}fa-suitcase{{/if}}"></i> <strong>{{entry.name}}</strong> <span class="tag">{{entry.type}}</span> <span class="tag confidence-{{entry.confidence}}">{{localize "SBI.Preview.Confidence"}}: {{entry.confidence}}</span>
+      {{#if entry.duplicate}}<span class="tag warning">duplicate{{#if entry.duplicate.policy}}: {{entry.duplicate.policy}}{{/if}}</span>{{/if}}</summary>
+    {{#if entry.errors.length}}<ul class="errors">{{#each entry.errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+    {{#if entry.duplicate}}
+    <div class="sbi-duplicate">
+      <p>Matches existing: {{#each entry.duplicate.matches}}<em>{{name}}</em> ({{reason}}) {{/each}}</p>
+      <div class="sbi-actions">
+        <button type="button" data-action="resolveDuplicate" data-entry="{{entry.id}}" data-policy="create">Create copy</button>
+        <button type="button" data-action="resolveDuplicate" data-entry="{{entry.id}}" data-policy="skip">Skip</button>
+        <button type="button" data-action="resolveDuplicate" data-entry="{{entry.id}}" data-policy="update">Update existing</button>
+        <button type="button" data-action="resolveDuplicate" data-entry="{{entry.id}}" data-policy="merge">Merge</button>
+      </div>
+    </div>
+    {{/if}}
+    <table class="sbi-stats"><tbody>{{#each entry.stats}}<tr><th>{{label}}</th><td>{{value}}</td></tr>{{/each}}</tbody></table>
+    {{#if entry.items.length}}
+    <h4>Features &amp; items ({{entry.items.length}})</h4>
+    <ul class="sbi-items">{{#each entry.items}}<li><strong>{{name}}</strong> <span class="tag">{{type}}</span>{{#if section}} <span class="tag">{{section}}</span>{{/if}} <span class="hint">{{activities}}</span></li>{{/each}}</ul>
+    {{/if}}
+    {{#if entry.warnings.length}}<ul class="warnings">{{#each entry.warnings}}<li><i class="fa-solid fa-triangle-exclamation"></i> {{this}}</li>{{/each}}</ul>{{/if}}
+    {{#if entry.mechanics.length}}
+    <h4>{{localize "SBI.Preview.Mechanics"}} ({{entry.mechanics.length}})</h4>
+    <table class="sbi-mechanics">
+      <thead><tr><th>{{localize "SBI.Preview.Enabled"}}</th><th>Item</th><th>Mechanic</th><th>Trigger</th><th>{{localize "SBI.Preview.Implementation"}}</th><th>{{localize "SBI.Preview.Confidence"}}</th><th></th></tr></thead>
+      <tbody>
+      {{#each entry.mechanics as |m|}}
+      <tr class="category-{{m.category}} {{#if m.reviewRequired}}review{{/if}} {{#unless m.enabled}}disabled{{/unless}}">
+        <td>{{#if m.canToggle}}<input type="checkbox" data-action="toggleMechanic" data-mechanic="{{m.id}}" {{#if m.enabled}}checked{{/if}}>{{else}}—{{/if}}</td>
+        <td>{{m.item}}</td>
+        <td><strong>{{m.label}}</strong><br><span class="hint">{{m.sourceText}}</span></td>
+        <td>{{m.trigger}}{{#if m.condition}}<br><span class="hint">{{m.condition}}</span>{{/if}}</td>
+        <td><span class="tag category-{{m.category}}">{{m.categoryLabel}}</span> <span class="hint">{{m.owner}}</span>{{#if m.requires}}<br><span class="hint">{{localize "SBI.Preview.Requires"}}: {{m.requires}}</span>{{/if}}{{#if m.notes}}<br><span class="hint">{{m.notes}}</span>{{/if}}</td>
+        <td><span class="tag confidence-{{m.confidence}}">{{m.confidencePct}}%</span></td>
+        <td>{{#if m.reviewRequired}}
+          <button type="button" class="icon" data-action="reviewMechanic" data-mechanic="{{m.id}}" data-decision="accept" data-tooltip="Accept as interpreted"><i class="fa-solid fa-check"></i></button>
+          <button type="button" class="icon" data-action="reviewMechanic" data-mechanic="{{m.id}}" data-decision="disable" data-tooltip="Keep description only"><i class="fa-solid fa-ban"></i></button>
+        {{/if}}</td>
+      </tr>
+      {{/each}}
+      </tbody>
+    </table>
+    {{/if}}
+  </details>
+  {{/each}}
+  {{#if preview.diagnostics.length}}
+  <details class="sbi-entry"><summary>{{localize "SBI.Preview.Warnings"}} ({{preview.diagnostics.length}})</summary>
+    <ul>{{#each preview.diagnostics}}<li class="{{level}}">{{message}}</li>{{/each}}</ul></details>
+  {{/if}}
+  {{/unless}}
+</section>
