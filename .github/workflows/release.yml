@@ -1,0 +1,106 @@
+name: Release
+
+# Tag v<version> to release Stat Block Importer, gmal-v<version> to release GM Asset Library.
+# Both modules are packaged and attached to every release, because both manifests point at
+# releases/latest/download/: a release carrying only one module would break the other's install URL.
+
+on:
+  push:
+    tags:
+      - "v[0-9]*"
+      - "gmal-v[0-9]*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Match the tag to a module version
+        id: tag
+        run: |
+          case "$GITHUB_REF_NAME" in
+            gmal-v*) dir=gm-asset-library; version="${GITHUB_REF_NAME#gmal-v}" ;;
+            v*)      dir=.;                version="${GITHUB_REF_NAME#v}" ;;
+          esac
+          id=$(node -p "require('./$dir/module.json').id")
+          actual=$(node -p "require('./$dir/module.json').version")
+          if [ "$actual" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME names version $version but $dir/module.json is $actual"
+            exit 1
+          fi
+          if ! grep -q "^## $version" "$dir/CHANGELOG.md"; then
+            echo "::error::$dir/CHANGELOG.md has no '## $version' section"
+            exit 1
+          fi
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+          echo "id=$id" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Verify and package every module
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          node utils/evergreen.mjs --check
+          mkdir -p release
+          for dir in . gm-asset-library; do
+            echo "::group::$dir"
+            ( cd "$dir" && npm ci && npm run lint && npm test && npm run validate:manifest && npm run package )
+            cp "$dir"/dist/*.zip "$dir"/dist/*.json release/
+            echo "::endgroup::"
+          done
+          ls -l release
+
+      - name: Extract the changelog section
+        id: notes
+        env:
+          DIR: ${{ steps.tag.outputs.dir }}
+          VERSION: ${{ steps.tag.outputs.version }}
+        run: |
+          awk -v v="$VERSION" '/^## /{p=($0 ~ "^## " v)} p' "$DIR/CHANGELOG.md" > "$RUNNER_TEMP/notes.md"
+          cat "$RUNNER_TEMP/notes.md"
+
+      - name: Publish the GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.tag.outputs.id }} ${{ steps.tag.outputs.version }}
+          body_path: ${{ runner.temp }}/notes.md
+          files: release/*
+          fail_on_unmatched_files: true
+
+      - name: Publish to the Foundry package registry
+        # Only runs when a release token for the tagged module is configured as a repository secret:
+        # FOUNDRY_RELEASE_TOKEN_STAT_BLOCK_IMPORTER or FOUNDRY_RELEASE_TOKEN_GM_ASSET_LIBRARY.
+        env:
+          DIR: ${{ steps.tag.outputs.dir }}
+          ID: ${{ steps.tag.outputs.id }}
+          VERSION: ${{ steps.tag.outputs.version }}
+          TAG: ${{ github.ref_name }}
+          FOUNDRY_RELEASE_TOKEN_STAT_BLOCK_IMPORTER: ${{ secrets.FOUNDRY_RELEASE_TOKEN_STAT_BLOCK_IMPORTER }}
+          FOUNDRY_RELEASE_TOKEN_GM_ASSET_LIBRARY: ${{ secrets.FOUNDRY_RELEASE_TOKEN_GM_ASSET_LIBRARY }}
+        run: |
+          var="FOUNDRY_RELEASE_TOKEN_$(echo "$ID" | tr '[:lower:]-' '[:upper:]_')"
+          token="${!var}"
+          if [ -z "$token" ]; then
+            echo "No $var secret configured; skipping the Foundry package registry."
+            exit 0
+          fi
+          manifest_name=$(basename "$(ls "$DIR"/dist/*.json)")
+          body=$(node -e '
+            const m = require(`./${process.env.DIR}/module.json`);
+            const base = `https://github.com/${process.env.GITHUB_REPOSITORY}/releases`;
+            console.log(JSON.stringify({ id: m.id, release: {
+              version: m.version,
+              manifest: `${base}/download/${process.env.TAG}/${process.env.MANIFEST}`,
+              notes: `${base}/tag/${process.env.TAG}`,
+              compatibility: m.compatibility
+            } }));
+          ' MANIFEST="$manifest_name")
+          curl --fail-with-body -sS -X POST "https://foundryvtt.com/_api/packages/release_version/" \
+            -H "Content-Type: application/json" -H "Authorization: $token" -d "$body"

@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - "dependabot/**"
+      - "evergreen/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  consistency:
+    name: Pinned versions agree
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: node utils/evergreen.mjs --check
+
+  module:
+    name: ${{ matrix.module }} (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [stat-block-importer, gm-asset-library]
+        node: [22, 24]
+        include:
+          - module: stat-block-importer
+            dir: .
+          - module: gm-asset-library
+            dir: gm-asset-library
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run validate:manifest
+      - run: npm run package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.module }}-node${{ matrix.node }}
+          path: ${{ matrix.dir }}/dist/
+          retention-days: 14

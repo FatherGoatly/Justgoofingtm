@@ -34,6 +34,8 @@ npm run package      # dist/gm-asset-library.zip + dist/gm-asset-library.module.
 
 Requirements: Foundry VTT 14.368 or later. No game system dependency.
 
+The verified Foundry build, dev dependencies and releases are maintained automatically for both modules in this repository; see [MAINTENANCE.md](../MAINTENANCE.md).
+
 ## Usage
 
 Open the library with the **images button in the Tokens scene controls**, the keybinding

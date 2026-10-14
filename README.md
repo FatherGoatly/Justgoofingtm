@@ -36,6 +36,8 @@ Requirements: Foundry VTT 14.367 or later (verified 14.369) and dnd5e 6.0.0 or l
 
 See `docs/` for the user guide, supported formats, automation model, integrations and troubleshooting.
 
+Compatibility versions, dependencies and releases are maintained automatically; see [MAINTENANCE.md](MAINTENANCE.md).
+
 ## Status
 
 Version 0.1.0. All milestones have working code and automated tests (106 tests: parsers, rules, document builders, automation, permissions, importer scenarios). Integration adapters were verified against the modules' sources and tested with mocks; a live-world run with the optional modules has **not** been performed in this environment. See `docs/integrations.md` for the tested/theoretical distinction and `CHANGELOG.md` for known limitations.

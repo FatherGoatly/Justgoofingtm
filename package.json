@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "validate:manifest": "node utils/validate-manifest.mjs",
+    "evergreen:check": "node utils/evergreen.mjs --check",
+    "evergreen:update": "node utils/evergreen.mjs --update",
     "package": "node utils/package.mjs"
   },
   "devDependencies": {

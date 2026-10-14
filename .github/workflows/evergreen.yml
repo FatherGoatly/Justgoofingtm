@@ -1,0 +1,84 @@
+name: Evergreen compatibility
+
+# Every week: find the newest stable Foundry build and the newest release of every related system,
+# bump "verified" within each module's "maximum", prove the suites still pass, and open a pull
+# request. A new major generation beyond "maximum" is reported as an issue instead of being applied.
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: evergreen
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Look up the newest stable releases
+        id: evergreen
+        run: >
+          node utils/evergreen.mjs --update
+          --summary "$RUNNER_TEMP/evergreen.json"
+          --body "$RUNNER_TEMP/evergreen.md"
+          --major-body "$RUNNER_TEMP/evergreen-major.md"
+
+      - name: Verify every module against the bumped versions
+        if: steps.evergreen.outputs.changed == 'true'
+        run: |
+          node utils/evergreen.mjs --check
+          for dir in . gm-asset-library; do
+            echo "::group::$dir"
+            ( cd "$dir" && npm ci && npm run lint && npm test && npm run validate:manifest )
+            echo "::endgroup::"
+          done
+
+      - name: Make sure the evergreen label exists
+        if: steps.evergreen.outputs.changed == 'true' || steps.evergreen.outputs.new_major == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh label create evergreen --description "Automated compatibility maintenance" --color 0E8A16 --force
+
+      - name: Open or update the compatibility pull request
+        if: steps.evergreen.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          # A personal access token (EVERGREEN_TOKEN) lets the CI workflow run on the PR; the default
+          # GITHUB_TOKEN cannot trigger other workflows, so the checks above are the gate in that case.
+          token: ${{ secrets.EVERGREEN_TOKEN || secrets.GITHUB_TOKEN }}
+          branch: evergreen/compatibility
+          delete-branch: true
+          title: ${{ steps.evergreen.outputs.title }}
+          body-path: ${{ runner.temp }}/evergreen.md
+          commit-message: ${{ steps.evergreen.outputs.title }}
+          labels: evergreen
+          add-paths: |
+            module.json
+            README.md
+            scripts/core/compatibility.js
+            gm-asset-library/module.json
+
+      - name: Flag a new major version for manual review
+        if: steps.evergreen.outputs.new_major == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: ${{ steps.evergreen.outputs.new_major_title }}
+        run: |
+          existing=$(gh issue list --state open --label evergreen --search "\"$TITLE\" in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/evergreen-major.md"
+          else
+            gh issue create --title "$TITLE" --label evergreen --body-file "$RUNNER_TEMP/evergreen-major.md"
+          fi
