@@ -24,6 +24,8 @@ export const jsFragment = (code, extra={}) => ({ type: "code", language: "javasc
 export const fvtt = (code, extra={}) => ({ type: "code", language: "javascript", code, compat: { target: "foundry", tested: "emulator", foundryVersion: "V14" }, runnable: "preview", ...extra });
 /** Foundry example verified against documentation and syntax-checked but not executed (API outside the emulator). */
 export const fvttStatic = (code, extra={}) => ({ type: "code", language: "javascript", code, compat: { target: "foundry", tested: "static", foundryVersion: "V14 (14.369 docs)" }, fragment: true, ...extra });
+/** Module source (import/export syntax) verified against documentation; shown, never executed or compiled as a macro. */
+export const mod = (code, extra={}) => ({ type: "code", language: "javascript", code, compat: { target: "module", tested: "static", foundryVersion: "V14 (14.369 docs)" }, fragment: true, moduleSyntax: true, ...extra });
 /** dnd5e example executed in the emulator. */
 export const dnd = (code, extra={}) => ({ type: "code", language: "javascript", code, compat: { target: "dnd5e", tested: "emulator", systemVersion: "6.0.6" }, runnable: "preview", ...extra });
 /** dnd5e example checked against the 6.0.6 source but not executed. */

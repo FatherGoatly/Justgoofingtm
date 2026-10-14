@@ -66,15 +66,17 @@ export function describeError(err) {
  * @param {string[]} [collect]   Names of functions to collect after the program finishes
  * @returns {Function}
  */
-export function compile(code, globalNames, collect=[]) {
+export function compile(code, globalNames, collect=[], scripts=[]) {
   // The program is wrapped in a block exactly as Foundry wraps a script macro's command, so learner code may
   // shadow globals with const/let (e.g. `const CONFIG = {...}`) without a redeclaration error.
   let trailer = "";
-  if ( collect.length ) {
+  if ( collect.length || scripts.length ) {
     // A collected name may be a dotted member path (e.g. "T.config.validate"); the root is guarded with typeof and the
     // rest with optional chaining so a missing function yields undefined instead of a ReferenceError.
     const expr = n => { const parts = n.split("."); return `(typeof ${parts[0]} === "undefined" ? undefined : ${parts.join("?.")})`; };
-    trailer = `\n;return { __academyFns: { ${collect.map(n => `${JSON.stringify(n)}: ${expr(n)}`).join(", ")} } };`;
+    // Script tests are exercise-authored snippets that run after the program, in its scope, and return a value.
+    const scriptFns = scripts.map(src => `async () => {\n${src}\n}`);
+    trailer = `\n;return { __academyFns: { ${collect.map(n => `${JSON.stringify(n)}: ${expr(n)}`).join(", ")} }, __academyScripts: [${scriptFns.join(", ")}] };`;
   }
   return new AsyncFunction(...globalNames, `{\n${code}\n${trailer}\n}`);
 }
@@ -103,24 +105,32 @@ export async function runProgram({ code, globals={}, tests=[] }) {
   const names = ["console", ...Object.keys(globals)];
   const values = [console, ...Object.values(globals)];
   const callTests = tests.map((t, index) => ({ t, index })).filter(({ t }) => t && "call" in t);
+  const scriptTests = tests.map((t, index) => ({ t, index })).filter(({ t }) => t && typeof t.script === "string");
   const collect = [...new Set(callTests.map(({ t }) => t.call))].filter(n => /^[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)*$/.test(n));
   const started = Date.now();
   let fn;
-  try { fn = compile(String(code), names, collect); }
+  try { fn = compile(String(code), names, collect, scriptTests.map(({ t }) => t.script)); }
   catch(err) {
-    return { ok: false, error: describeError(err), output, returnValue: undefined, callResults: callTests.map(({ index }) => ({ index, missing: true })), durationMs: Date.now() - started };
+    return { ok: false, error: describeError(err), output, returnValue: undefined, callResults: [...callTests, ...scriptTests].map(({ index }) => ({ index, missing: true })), durationMs: Date.now() - started };
   }
   let returnValue;
   let error = null;
   let fns = {};
+  let scripts = [];
   try {
     const result = await fn(...values);
-    if ( result && typeof result === "object" && result.__academyFns ) fns = result.__academyFns;
+    if ( result && typeof result === "object" && result.__academyFns ) { fns = result.__academyFns; scripts = result.__academyScripts ?? []; }
     else returnValue = result;
   } catch(err) {
     error = describeError(err);
   }
   const callResults = [];
+  for ( const [i, { index }] of scriptTests.entries() ) {
+    const f = scripts[i];
+    if ( typeof f !== "function" ) { callResults.push({ index, missing: true }); continue; }
+    try { callResults.push({ index, result: sanitize(await f()) }); }
+    catch(err) { callResults.push({ index, error: describeError(err) }); }
+  }
   for ( const { t, index } of callTests ) {
     const f = fns[t.call];
     if ( typeof f !== "function" ) { callResults.push({ index, missing: true }); continue; }

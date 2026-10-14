@@ -155,16 +155,17 @@ function evaluateTest(tc, index, run, code) {
   const name = tc.name;
   const fail = message => ({ name, passed: false, message });
   const pass = message => ({ name, passed: true, message });
-  if ( "call" in tc ) {
+  if ( "call" in tc || "script" in tc ) {
     const cr = run.callResults?.find(r => r.index === index);
-    if ( !cr ) return fail(`The function ${tc.call} was not called (did the program fail before defining it?)`);
-    if ( cr.missing ) return fail(`No function named "${tc.call}" was defined. Define it with: function ${tc.call}(...) { ... }`);
+    const label = "call" in tc ? `${tc.call}(${fmtArgs(tc.args)})` : "the test script";
+    if ( !cr ) return fail("call" in tc ? `The function ${tc.call} was not called (did the program fail before defining it?)` : "The test script did not run (did the program fail or return early?)");
+    if ( cr.missing ) return fail("call" in tc ? `No function named "${tc.call}" was defined. Define it with: function ${tc.call}(...) { ... }` : "The test script could not run because the program returned early or failed to compile.");
     if ( "expectThrows" in tc ) {
-      if ( !cr.error ) return fail(`Expected ${tc.call}(${fmtArgs(tc.args)}) to throw an error, but it returned ${fmt(cr.result)}`);
+      if ( !cr.error ) return fail(`Expected ${label} to throw an error, but it returned ${fmt(cr.result)}`);
       if ( typeof tc.expectThrows === "string" && !String(cr.error.message).includes(tc.expectThrows) ) return fail(`Threw "${cr.error.message}" but expected a message containing "${tc.expectThrows}"`);
       return pass(`Throws as expected`);
     }
-    if ( cr.error ) return fail(`${tc.call}(${fmtArgs(tc.args)}) threw ${cr.error.name}: ${cr.error.message}`);
+    if ( cr.error ) return fail(`${label} threw ${cr.error.name}: ${cr.error.message}`);
     if ( "expectType" in tc ) {
       const actualType = Array.isArray(cr.result) ? "array" : (cr.result === null ? "null" : typeof cr.result);
       return actualType === tc.expectType ? pass(`Returns a ${tc.expectType}`) : fail(`Expected a ${tc.expectType} but got ${actualType} (${fmt(cr.result)})`);
@@ -172,9 +173,9 @@ function evaluateTest(tc, index, run, code) {
     if ( "expectMatches" in tc ) {
       const re = new RegExp(tc.expectMatches, tc.flags ?? "");
       const text = typeof cr.result === "string" ? cr.result : fmt(cr.result);
-      return re.test(text) ? pass(`Returns ${fmt(cr.result)}`) : fail(`${tc.call}(${fmtArgs(tc.args)}) returned ${fmt(cr.result)}, which does not match /${tc.expectMatches}/`);
+      return re.test(text) ? pass(`Returns ${fmt(cr.result)}`) : fail(`${label} returned ${fmt(cr.result)}, which does not match /${tc.expectMatches}/`);
     }
-    return deepEqual(cr.result, tc.expect) ? pass(`${tc.call}(${fmtArgs(tc.args)}) → ${fmt(cr.result)}`) : fail(`${tc.call}(${fmtArgs(tc.args)}) returned ${fmt(cr.result)} but ${fmt(tc.expect)} was expected`);
+    return deepEqual(cr.result, tc.expect) ? pass(`${label} → ${fmt(cr.result)}`) : fail(`${label} returned ${fmt(cr.result)} but ${fmt(tc.expect)} was expected`);
   }
   if ( "expectNoError" in tc ) {
     if ( run.timedOut ) return fail("Program timed out");

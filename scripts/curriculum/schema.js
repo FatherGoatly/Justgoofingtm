@@ -42,7 +42,7 @@ export const CODE_EXERCISE_TYPES = Object.freeze(["repair-code", "write-function
 export const RUBRIC_EXERCISE_TYPES = Object.freeze(["explain-code", "capstone"]);
 
 export const TEST_KINDS = Object.freeze([
-  "call", "expectOutput", "outputIncludes", "outputMatches", "expectNoError", "expectError", "expectChat",
+  "call", "script", "expectOutput", "outputIncludes", "outputMatches", "expectNoError", "expectError", "expectChat",
   "expectNotification", "expectUpdate", "expectNoUpdate", "expectReturn", "returnMatches", "expectTimeout",
   "expectDialog", "expectCreate", "expectRoll", "codeIncludes", "codeExcludes", "expectHook", "expectMechanic"
 ]);
@@ -342,6 +342,10 @@ function validateTest(tc, p, c) {
     if ( !isString(tc.call) ) c.err(`${p}.call`, "function name required");
     if ( tc.args !== undefined && !isArray(tc.args) ) c.err(`${p}.args`, "args must be an array");
     if ( !("expect" in tc) && !("expectMatches" in tc) && !("expectType" in tc) && !("expectThrows" in tc) ) c.err(p, "call tests need expect, expectMatches, expectType or expectThrows");
+  }
+  if ( "script" in tc ) {
+    if ( !isString(tc.script) ) c.err(`${p}.script`, "script source required");
+    if ( !("expect" in tc) && !("expectMatches" in tc) && !("expectType" in tc) && !("expectThrows" in tc) ) c.err(p, "script tests need expect, expectMatches, expectType or expectThrows");
   }
   if ( "expectOutput" in tc && !isArray(tc.expectOutput) && !isString(tc.expectOutput, 0) ) c.err(`${p}.expectOutput`, "string or array required");
   if ( "expectUpdate" in tc && (!isObject(tc.expectUpdate) || !isString(tc.expectUpdate.path)) ) c.err(`${p}.expectUpdate`, "needs {name|uuid, path, value?}");

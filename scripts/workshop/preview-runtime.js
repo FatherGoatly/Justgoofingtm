@@ -86,6 +86,22 @@ export function isEmpty(v) {
 
 export function escapeHTML(value) { return String(value ?? "").replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch])); }
 
+/**
+ * Stand-in for foundry.utils.cleanHTML, which uses the browser DOM. The worker has no DOM, so this removes script,
+ * style, iframe and object elements, inline event-handler attributes and javascript: URLs with conservative patterns.
+ * It records nothing; it exists so lessons can demonstrate the difference between escaping and sanitizing.
+ * @param {string} html
+ * @returns {string}
+ */
+export function cleanHTML(html) {
+  let out = String(html ?? "");
+  out = out.replace(/<\s*(script|style|iframe|object|embed)\b[\s\S]*?<\s*\/\s*\1\s*>/gi, "");
+  out = out.replace(/<\s*(script|style|iframe|object|embed)\b[^>]*\/?>/gi, "");
+  out = out.replace(/\s+on[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "");
+  out = out.replace(/\s+(href|src|action|formaction)\s*=\s*("\s*javascript:[^"]*"|'\s*javascript:[^']*'|javascript:[^\s>]+)/gi, "");
+  return out;
+}
+
 export function randomID(length=16) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let out = "";
@@ -156,9 +172,10 @@ class EmulatedDocument {
     if ( user?.isGM ) return true;
     const levels = { NONE: 0, LIMITED: 1, OBSERVER: 2, OWNER: 3 };
     const want = typeof permission === "number" ? permission : (levels[permission] ?? 0);
-    const level = this.ownership?.[user?.id] ?? this.ownership?.default ?? 0;
-    const effective = this._source.isOwner === false ? Math.min(level, 2) : Math.max(level, 3);
-    return effective >= want;
+    let level = this.ownership?.[user?.id] ?? this.ownership?.default ?? 0;
+    // The snapshot's isOwner flag describes the *current* user only; for other users the ownership map decides.
+    if ( user?.id === this._rt.snapshot.user?.id && typeof this._source.isOwner === "boolean" ) level = this._source.isOwner ? Math.max(level, 3) : Math.min(level, 2);
+    return level >= want;
   }
   canUserModify(user, action="update") { return this.testUserPermission(user, "OWNER") && action !== "delete" || user?.isGM; }
   getFlag(scope, key) { return getProperty(this.flags, `${scope}.${key}`); }
@@ -353,6 +370,12 @@ class EmulatedTokenDocument extends EmulatedDocument {
     this._controlled = Boolean(data.controlled);
     this._targeted = Boolean(data.targeted);
     Object.defineProperty(this, "object", { value: new EmulatedToken(this, rt), enumerable: false });
+  }
+  /** As in Foundry, a token's permissions derive from its actor (owners of the actor may update the token). */
+  testUserPermission(user, permission) {
+    if ( user?.isGM ) return true;
+    const actor = this.actor;
+    return actor ? actor.testUserPermission(user, permission) : false;
   }
   get actor() {
     if ( !this.actorLink && this._source.syntheticActor ) {
@@ -867,7 +890,7 @@ export class PreviewRuntime {
     };
 
     const foundry = {
-      utils: { deepClone, duplicate: deepClone, mergeObject, expandObject, flattenObject, getProperty, setProperty, hasProperty, isEmpty, escapeHTML, randomID, isNewerVersion, debounce: (fn) => fn, throttle: (fn) => fn, isSubclass: (a, b) => a === b || b.isPrototypeOf(a), fetchJsonWithTimeout: async () => { throw NOT_EMULATED("foundry.utils.fetchJsonWithTimeout"); } },
+      utils: { deepClone, duplicate: deepClone, mergeObject, expandObject, flattenObject, getProperty, setProperty, hasProperty, isEmpty, escapeHTML, cleanHTML, randomID, isNewerVersion, debounce: (fn) => fn, throttle: (fn) => fn, isSubclass: (a, b) => a === b || b.isPrototypeOf(a), fetchJsonWithTimeout: async () => { throw NOT_EMULATED("foundry.utils.fetchJsonWithTimeout"); } },
       applications: { api: { DialogV2, ApplicationV2: class { constructor() { throw NOT_EMULATED("ApplicationV2 subclasses"); } }, HandlebarsApplicationMixin: () => class {} }, handlebars: { renderTemplate: async () => { throw NOT_EMULATED("renderTemplate"); } }, ux: { TextEditor: { implementation: { enrichHTML: async html => String(html) } } } },
       documents: { Actor: EmulatedActor, Item: EmulatedItem, Macro: class {}, ChatMessage: ChatMessageEmu },
       canvas: { placeables: { Token: EmulatedToken } },

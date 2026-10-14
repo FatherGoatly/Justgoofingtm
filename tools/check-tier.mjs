@@ -20,7 +20,7 @@ let terms = null;
 try { const g = await import("../curriculum/glossary.js"); terms = new Set(g.GLOSSARY.map(t => t.slug)); } catch(_err) { /* ignore */ }
 const snapshotFor = name => name === "practice-player" ? createPracticeSnapshot({ gm: false }) : name === "practice-generic" ? createPracticeSnapshot({ system: "generic" }) : name === "practice-nocombat" ? createPracticeSnapshot({ combat: false }) : name === "practice-midi" ? createPracticeSnapshot({ modules: ["midi-qol"] }) : createPracticeSnapshot();
 const run = async ({ code, runtime, tests=[], inputs=[], snapshot, seed=11 }) => runInNodeWorker({ mode: runtime, code, tests, ...(runtime === "preview" ? { snapshot: snapshotFor(snapshot), inputs, seed } : {}) }, { timeoutMs: 4000 });
-const declared = ex => ({ "multiple-choice": ex.answer, "predict-output": Array.isArray(ex.answer) ? ex.answer[0] : ex.answer, "fill-blank": ex.blanks?.map(b => b.accept[0]), "identify-error": ex.answer, "reorder-steps": ex.answer, "api-discovery": ex.accept?.[0], "explain-code": { text: Array(80).fill("w").join(" "), rubric: ex.rubric?.map(r => r.id) }, "capstone": { text: Array(80).fill("w").join(" "), rubric: ex.rubric?.map(r => r.id) } })[ex.type];
+const declared = ex => ({ "multiple-choice": ex.answer, "predict-output": Array.isArray(ex.answer) ? ex.answer[0] : ex.answer, "fill-blank": ex.blanks?.map(b => b.accept[0]), "identify-error": ex.answer, "reorder-steps": ex.answer, "api-discovery": ex.accept?.[0], "explain-code": { text: Array(Math.max(80, (ex.minWords ?? 0) + 10)).fill("w").join(" "), rubric: ex.rubric?.map(r => r.id) }, "capstone": { text: Array(Math.max(80, (ex.minWords ?? 0) + 10)).fill("w").join(" "), rubric: ex.rubric?.map(r => r.id) } })[ex.type];
 
 let failures = 0;
 const fail = msg => { failures++; console.error(`  ✖ ${msg}`); };
@@ -34,7 +34,7 @@ for ( const m of tiers ) {
     try { const html = renderLessonHeader(lesson) + renderLessonSections(lesson) + (lesson.exercises ?? []).map(e => renderExercise(e)).join("") + (lesson.challenge ? renderExercise(lesson.challenge) : "") + (lesson.checkpoint ? renderCheckpoint(lesson.checkpoint) : ""); if ( /<script/i.test(html) ) fail("rendered html contains <script"); } catch(err) { fail(`render failed: ${err.message}`); }
     for ( const s of lesson.sections ?? [] ) for ( const b of s.blocks ?? [] ) {
       if ( b.type !== "code" ) continue;
-      if ( !b.expectError && ["javascript", "foundry", "dnd5e", "module"].includes(b.compat?.target) ) { const r = checkSyntax(b.code); if ( !r.ok ) fail(`${lesson.id}/${s.id}: syntax ${r.error.message}`); }
+      if ( !b.expectError && !b.moduleSyntax && ["javascript", "foundry", "dnd5e", "module"].includes(b.compat?.target) ) { const r = checkSyntax(b.code); if ( !r.ok ) fail(`${lesson.id}/${s.id}: syntax ${r.error.message}`); }
       if ( b.runnable ) {
         const r = await run({ code: b.code, runtime: b.runnable, inputs: b.inputs ?? [], snapshot: b.snapshot });
         if ( b.expectError && r.ok ) fail(`${lesson.id}/${s.id}: expected an error but ran cleanly`);

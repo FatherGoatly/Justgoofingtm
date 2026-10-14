@@ -41,7 +41,7 @@ function declaredAnswer(exercise) {
     case "identify-error": return exercise.answer;
     case "reorder-steps": return exercise.answer;
     case "api-discovery": return exercise.accept[0];
-    case "explain-code": case "capstone": return { text: Array(80).fill("word").join(" "), rubric: exercise.rubric.map(r => r.id) };
+    case "explain-code": case "capstone": return { text: Array(Math.max(80, (exercise.minWords ?? 0) + 10)).fill("word").join(" "), rubric: exercise.rubric.map(r => r.id) };
     default: return null;
   }
 }
@@ -98,7 +98,7 @@ describe("curriculum bundle", () => {
 describe("executable examples", () => {
   it("every code block is syntactically valid JavaScript (unless pseudocode/json/html/shell)", () => {
     for ( const lesson of bundle.lessons ) for ( const s of lesson.sections ) for ( const b of s.blocks ) {
-      if ( b.type !== "code" || b.expectError || !["javascript", "foundry", "dnd5e", "module"].includes(b.compat.target) ) continue;
+      if ( b.type !== "code" || b.expectError || b.moduleSyntax || !["javascript", "foundry", "dnd5e", "module"].includes(b.compat.target) ) continue;
       const r = checkSyntax(b.code);
       expect(r.ok, `${lesson.id}/${s.id}: ${r.error?.message}\n${b.code}`).toBe(true);
     }

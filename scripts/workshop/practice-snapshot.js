@@ -101,8 +101,11 @@ export function createPracticeSnapshot({ system="dnd5e", combat=true, gm=true, m
     scene: { id: "acaScene000001", uuid: "Scene.acaScene000001", name: "Academy Practice Yard", active: true, grid: { size: 100, distance: 5, units: "ft", type: 1 }, width: 3000, height: 2000, tokenIds: PRACTICE_TOKENS.map(t => t.id) },
     scenes: [{ id: "acaScene000001", name: "Academy Practice Yard", active: true, uuid: "Scene.acaScene000001" }, { id: "acaScene000002", name: "Tavern Cellar", active: false, uuid: "Scene.acaScene000002" }],
     actors: JSON.parse(JSON.stringify(PRACTICE_ACTORS)).map(a => {
+      // Player characters are owned by their players (as a real world would have it); NPCs belong to the GM only.
+      const playerOwner = users.find(u => u.character === a.id);
+      const ownership = playerOwner ? { default: 0, [playerOwner.id]: 3 } : { default: 0 };
       const owner = gm || a.id === user.character;
-      return { ...a, isOwner: owner, ownership: owner ? { default: 0, [user.id]: 3 } : { default: 0 } };
+      return { ...a, isOwner: owner, ownership };
     }),
     tokens: JSON.parse(JSON.stringify(PRACTICE_TOKENS)).map(t => {
       if ( t.actorLink ) return t;
@@ -111,7 +114,7 @@ export function createPracticeSnapshot({ system="dnd5e", combat=true, gm=true, m
       const synthetic = JSON.parse(JSON.stringify(base));
       synthetic.name = t.name;
       synthetic.isOwner = gm;
-      synthetic.ownership = gm ? { default: 0, [user.id]: 3 } : { default: 0 };
+      synthetic.ownership = { default: 0 };
       return { ...t, syntheticActor: synthetic };
     }),
     items: [{ id: "itmWorldPotion1", uuid: "Item.itmWorldPotion1", name: "Potion of Greater Healing", type: "consumable", img: "icons/svg/item-bag.svg", system: { quantity: 1 } }],
