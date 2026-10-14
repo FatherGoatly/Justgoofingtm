@@ -70,7 +70,10 @@ export function compile(code, globalNames, collect=[]) {
   // shadow globals with const/let (e.g. `const CONFIG = {...}`) without a redeclaration error.
   let trailer = "";
   if ( collect.length ) {
-    trailer = `\n;return { __academyFns: { ${collect.map(n => `${JSON.stringify(n)}: (typeof ${n} === "undefined" ? undefined : ${n})`).join(", ")} } };`;
+    // A collected name may be a dotted member path (e.g. "T.config.validate"); the root is guarded with typeof and the
+    // rest with optional chaining so a missing function yields undefined instead of a ReferenceError.
+    const expr = n => { const parts = n.split("."); return `(typeof ${parts[0]} === "undefined" ? undefined : ${parts.join("?.")})`; };
+    trailer = `\n;return { __academyFns: { ${collect.map(n => `${JSON.stringify(n)}: ${expr(n)}`).join(", ")} } };`;
   }
   return new AsyncFunction(...globalNames, `{\n${code}\n${trailer}\n}`);
 }
@@ -99,7 +102,7 @@ export async function runProgram({ code, globals={}, tests=[] }) {
   const names = ["console", ...Object.keys(globals)];
   const values = [console, ...Object.values(globals)];
   const callTests = tests.map((t, index) => ({ t, index })).filter(({ t }) => t && "call" in t);
-  const collect = [...new Set(callTests.map(({ t }) => t.call))].filter(n => /^[A-Za-z_$][\w$]*$/.test(n));
+  const collect = [...new Set(callTests.map(({ t }) => t.call))].filter(n => /^[A-Za-z_$][\w$]*(\.[A-Za-z_$][\w$]*)*$/.test(n));
   const started = Date.now();
   let fn;
   try { fn = compile(String(code), names, collect); }

@@ -229,7 +229,9 @@ function evaluateTest(tc, index, run, code) {
   if ( "expectNotification" in tc ) {
     const spec = tc.expectNotification;
     const list = run.notifications ?? [];
-    const hit = list.find(n => (!spec.type || n.type === spec.type) && (!spec.contains || n.message.includes(spec.contains)));
+    const hits = list.filter(n => (!spec.type || n.type === spec.type) && (!spec.contains || n.message.includes(spec.contains)));
+    if ( typeof spec.count === "number" ) return hits.length === spec.count ? pass(`${hits.length} ${spec.type ?? ""} notification(s), as expected`) : fail(`Expected ${spec.count} ${spec.type ?? ""} notification(s) but ${hits.length} were shown${hits.length ? `: ${hits.map(n => n.message).join(" | ")}` : ""}`);
+    const hit = hits[0];
     return hit ? pass(`Notification shown: ${hit.message}`) : fail(`Expected a ${spec.type ?? ""} notification${spec.contains ? ` containing "${spec.contains}"` : ""}. Use ui.notifications.${spec.type ?? "warn"}(...)`);
   }
   if ( "expectUpdate" in tc ) {

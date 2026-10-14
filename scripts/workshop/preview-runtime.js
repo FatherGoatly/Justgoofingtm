@@ -163,12 +163,26 @@ class EmulatedDocument {
   canUserModify(user, action="update") { return this.testUserPermission(user, "OWNER") && action !== "delete" || user?.isGM; }
   getFlag(scope, key) { return getProperty(this.flags, `${scope}.${key}`); }
   async setFlag(scope, key, value) { return this.update({ [`flags.${scope}.${key}`]: value }); }
-  async unsetFlag(scope, key) { const flags = deepClone(this.flags); const s = flags[scope] ?? {}; delete s[key]; return this.update({ flags }, { diff: false }); }
+  async unsetFlag(scope, key) {
+    // Foundry expresses deletion with the "-=" key prefix; the emulator applies it directly and records the same change.
+    this._rt.assertWritable(this);
+    if ( this.flags[scope] ) delete this.flags[scope][key];
+    this._rt.record("updates", { uuid: this.uuid, name: this.name, documentName: this.documentName, data: { [`flags.${scope}.-=${key}`]: null } });
+    return this;
+  }
   toObject() { return deepClone({ _id: this.id, name: this.name, img: this.img, type: this.type, flags: this.flags, system: this.system, ownership: this.ownership }); }
   toJSON() { return this.toObject(); }
-  async update(changes={}, _options={}) {
+  async update(changes={}, options={}) {
     this._rt.assertWritable(this);
+    // Document hooks fire as in Foundry: preUpdate<Document> may veto by returning false; update<Document> fires afterwards.
+    const userId = this._rt.snapshot.user?.id;
+    const Hooks = this._rt.globals?.Hooks;
+    // Hooks receive the change delta in expanded form ({ system: { attributes: ... } }), as Foundry passes it.
     const expanded = expandObject(deepClone(changes));
+    if ( Hooks && Hooks.call(`preUpdate${this.documentName}`, this, expanded, options, userId) === false ) {
+      this._rt.record("warnings", { type: "hook", message: `preUpdate${this.documentName} hook cancelled an update to ${this.name}.` });
+      return this;
+    }
     if ( "name" in expanded ) this.name = expanded.name;
     if ( "img" in expanded ) this.img = expanded.img;
     if ( expanded.system ) mergeObject(this.system, expanded.system);
@@ -176,14 +190,22 @@ class EmulatedDocument {
     if ( expanded.ownership ) mergeObject(this.ownership, expanded.ownership);
     this._applyExtra(expanded);
     this._rt.record("updates", { uuid: this.uuid, name: this.name, documentName: this.documentName, data: deepClone(changes) });
+    Hooks?.callAll(`update${this.documentName}`, this, expanded, options, userId);
     return this;
   }
   _applyExtra(_expanded) {}
-  async delete() {
+  async delete(options={}) {
     this._rt.assertWritable(this, "delete");
+    const userId = this._rt.snapshot.user?.id;
+    const Hooks = this._rt.globals?.Hooks;
+    if ( Hooks && Hooks.call(`preDelete${this.documentName}`, this, options, userId) === false ) {
+      this._rt.record("warnings", { type: "hook", message: `preDelete${this.documentName} hook cancelled deleting ${this.name}.` });
+      return this;
+    }
     this._rt.record("deletes", { uuid: this.uuid, name: this.name, documentName: this.documentName });
     const coll = this._rt.collectionFor(this);
     coll?.delete(this.id);
+    Hooks?.callAll(`delete${this.documentName}`, this, options, userId);
     return this;
   }
 }
@@ -240,6 +262,7 @@ class EmulatedActor extends EmulatedDocument {
       (embeddedName === "Item" ? this.items : this.effects).set(id, doc);
       created.push(doc);
       this._rt.record("creates", { documentName: embeddedName, parent: this.name, data: deepClone(d) });
+      this._rt.globals?.Hooks?.callAll(`create${embeddedName}`, doc, {}, this._rt.snapshot.user?.id);
     }
     return created;
   }
@@ -823,9 +846,9 @@ export class PreviewRuntime {
 
     const deprecated = (name, replacement) => class { constructor() { throw new Error(`${name} was deprecated in Foundry V13 and should not be used in new code. Use ${replacement} instead.`); } static async confirm() { throw new Error(`${name}.confirm was deprecated in V13. Use ${replacement}.confirm instead.`); } static async prompt() { throw new Error(`${name}.prompt was deprecated in V13. Use ${replacement}.prompt instead.`); } static async wait() { throw new Error(`${name}.wait was deprecated in V13. Use ${replacement}.wait instead.`); } };
 
-    const ActorStatic = { create: async data => { rt.assertCreate("Actor"); const a = new EmulatedActor({ ...data, id: data._id ?? randomID(), isOwner: true }, rt); actors.set(a.id, a); rt.record("creates", { documentName: "Actor", data: deepClone(data) }); return a; }, get implementation() { return ActorStatic; }, documentName: "Actor", canUserCreate: u => u.can("ACTOR_CREATE") };
-    const ItemStatic = { create: async (data, { parent }={}) => { if ( parent ) return (await parent.createEmbeddedDocuments("Item", [data]))[0]; rt.assertCreate("Item"); const i = new EmulatedItem({ ...data, id: data._id ?? randomID() }, rt, null); items.set(i.id, i); rt.record("creates", { documentName: "Item", data: deepClone(data) }); return i; }, get implementation() { return ItemStatic; }, documentName: "Item" };
-    const MacroStatic = { create: async data => { if ( !user.can("MACRO_SCRIPT") && (data.type ?? "script") === "script" ) throw new Error("Permission denied: your user cannot create script macros."); const m = new EmulatedDocument("Macro", { ...data, id: data._id ?? randomID() }, rt); m.command = data.command ?? ""; m.type = data.type ?? "script"; macros.set(m.id, m); rt.record("creates", { documentName: "Macro", data: deepClone(data) }); return m; }, get implementation() { return MacroStatic; }, documentName: "Macro", canUserCreate: u => u.hasRole("PLAYER") };
+    const ActorStatic = { create: async data => { rt.assertCreate("Actor"); const a = new EmulatedActor({ ...data, id: data._id ?? randomID(), isOwner: true }, rt); actors.set(a.id, a); rt.record("creates", { documentName: "Actor", data: deepClone(data) }); Hooks.callAll("createActor", a, {}, user.id); return a; }, get implementation() { return ActorStatic; }, documentName: "Actor", canUserCreate: u => u.can("ACTOR_CREATE"), updateDocuments: async (updates=[]) => { const out = []; for ( const u of updates ) { const doc = actors.get(u._id); if ( !doc ) throw new Error(`No Actor with id ${u._id}`); const { _id, ...rest } = u; await doc.update(rest); out.push(doc); } rt.record("mechanics", { type: "batchUpdate", documentName: "Actor", count: updates.length }); return out; } };
+    const ItemStatic = { create: async (data, { parent }={}) => { if ( parent ) return (await parent.createEmbeddedDocuments("Item", [data]))[0]; rt.assertCreate("Item"); const i = new EmulatedItem({ ...data, id: data._id ?? randomID() }, rt, null); items.set(i.id, i); rt.record("creates", { documentName: "Item", data: deepClone(data) }); Hooks.callAll("createItem", i, {}, user.id); return i; }, get implementation() { return ItemStatic; }, documentName: "Item", updateDocuments: async (updates=[]) => { const out = []; for ( const u of updates ) { const doc = items.get(u._id); if ( !doc ) throw new Error(`No Item with id ${u._id}`); const { _id, ...rest } = u; await doc.update(rest); out.push(doc); } rt.record("mechanics", { type: "batchUpdate", documentName: "Item", count: updates.length }); return out; } };
+    const MacroStatic = { create: async data => { if ( !user.can("MACRO_SCRIPT") && (data.type ?? "script") === "script" ) throw new Error("Permission denied: your user cannot create script macros."); const m = new EmulatedDocument("Macro", { ...data, id: data._id ?? randomID() }, rt); m.command = data.command ?? ""; m.type = data.type ?? "script"; macros.set(m.id, m); rt.record("creates", { documentName: "Macro", data: deepClone(data) }); Hooks.callAll("createMacro", m, {}, user.id); return m; }, get implementation() { return MacroStatic; }, documentName: "Macro", canUserCreate: u => u.hasRole("PLAYER") };
 
     return {
       game, ui, canvas, Hooks, CONST, CONFIG, foundry, fromUuid, fromUuidSync,
