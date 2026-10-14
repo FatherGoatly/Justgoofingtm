@@ -96,7 +96,7 @@ export class ProgressService {
     rec.bestScore = Math.max(rec.bestScore, score);
     rec.hintsUsed = Math.max(rec.hintsUsed, hints);
     if ( passed ) {
-      if ( !rec.passed ) { rec.firstPassedAt = Date.now(); this.progress.stats.exercisesPassed += 1; this.#activity("passed", exerciseId, this.registry.getExercise(exerciseId)?.title ?? exerciseId); }
+      if ( !rec.passed ) { rec.firstPassedAt = Date.now(); this.progress.stats.exercisesPassed += 1; this.#activity("passed", exerciseId, this.registry.getExercise(exerciseId)?.title ?? exerciseId); globalThis.Hooks?.callAll?.(`${MODULE_ID}.exercisePassed`, exerciseId, { assisted }); }
       // An exercise counts as independent once it has been passed without assistance at least once.
       rec.assisted = rec.passed ? (rec.assisted && assisted) : assisted;
       rec.passed = true;
@@ -148,7 +148,7 @@ export class ProgressService {
     const next = computeLessonState(lesson, this.progress, { requireAssessment });
     rec.state = next;
     rec.lessonVersion = lesson.version;
-    if ( COMPLETED_STATES.includes(next) && !COMPLETED_STATES.includes(prev) ) { rec.completedAt = Date.now(); this.#activity("completed", id, lesson.title); }
+    if ( COMPLETED_STATES.includes(next) && !COMPLETED_STATES.includes(prev) ) { rec.completedAt = Date.now(); this.#activity("completed", id, lesson.title); globalThis.Hooks?.callAll?.(`${MODULE_ID}.lessonCompleted`, id, next); }
     return next;
   }
 
