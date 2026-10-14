@@ -16,8 +16,8 @@ jobs:
     name: Pinned versions agree
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: node utils/evergreen.mjs --check
@@ -29,8 +29,8 @@ jobs:
     # runs the same audit as a blocking check and opens an issue when it fails.
     continue-on-error: true
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: node utils/api-audit.mjs
@@ -52,8 +52,8 @@ jobs:
       run:
         working-directory: ${{ matrix.dir }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -63,7 +63,7 @@ jobs:
       - run: npm test
       - run: npm run validate:manifest
       - run: npm run package
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.module }}-node${{ matrix.node }}
           path: ${{ matrix.dir }}/dist/
