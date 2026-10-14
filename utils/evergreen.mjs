@@ -139,30 +139,35 @@ async function fetchText(url) {
   return res.text();
 }
 
-/** All Foundry builds tagged "Stable" on the public release notes index, newest first. */
-async function stableFoundryBuilds() {
+/** Every Foundry build on the public release notes index with its channel (stable, testing, development, prototype), newest first. */
+async function foundryBuilds() {
   const html = await fetchText(FOUNDRY_RELEASES);
   const builds = [];
   for ( const item of html.split("<li class=\"article release") ) {
-    const v = item.match(/href="\/releases\/(\d+\.\d+)"/)?.[1];
-    if ( v && /class="release-tag stable"/.test(item) ) builds.push(v);
+    const version = item.match(/href="\/releases\/(\d+\.\d+)"/)?.[1];
+    const channel = item.match(/class="release-tag (stable|testing|development|prototype)"/)?.[1];
+    if ( version && channel ) builds.push({ version, channel });
   }
-  if ( !builds.length ) throw new Error("No stable builds found on the Foundry release index; has the page layout changed?");
-  return builds.sort((a, b) => compareVersions(b, a));
+  if ( !builds.some(b => b.channel === "stable") ) throw new Error("No stable builds found on the Foundry release index; has the page layout changed?");
+  return builds.sort((a, b) => compareVersions(b.version, a.version));
 }
 
 /** Newest version available for a dependency, and the newest version within the allowed generation. */
 async function lookup(dep, cache) {
   if ( dep.id === "core" ) {
-    cache.core ??= await stableFoundryBuilds();
+    cache.core ??= await foundryBuilds();
     const gen = major(dep.compatibility.maximum ?? dep.compatibility.verified);
-    return { latest: cache.core[0], latestInRange: cache.core.find(v => major(v) <= gen) ?? null, notes: v => `${FOUNDRY_RELEASES}${v}` };
+    // Only stable builds are ever applied, but a newer generation on any channel (prototype, testing)
+    // is reported early so there is time to test before it becomes stable.
+    const stable = cache.core.filter(b => b.channel === "stable");
+    const newest = cache.core[0];
+    return { latest: newest.version, channel: newest.channel, latestInRange: stable.find(b => major(b.version) <= gen)?.version ?? null, notes: v => `${FOUNDRY_RELEASES}${v}` };
   }
   cache[dep.manifestUrl] ??= JSON.parse(await fetchText(dep.manifestUrl));
   const remote = cache[dep.manifestUrl];
   const gen = major(dep.compatibility.maximum ?? dep.compatibility.verified);
   const url = (remote.url ?? "").replace(/\/$/, "");
-  return { latest: remote.version, latestInRange: major(remote.version) <= gen ? remote.version : null, notes: () => url ? `${url}/releases` : dep.manifestUrl };
+  return { latest: remote.version, channel: "release", latestInRange: major(remote.version) <= gen ? remote.version : null, notes: () => url ? `${url}/releases` : dep.manifestUrl };
 }
 
 async function update() {
@@ -174,7 +179,7 @@ async function update() {
     let text = read(mod.manifestPath);
     for ( const dep of mod.deps ) {
       const current = dep.compatibility.verified;
-      const { latest, latestInRange, notes } = await lookup(dep, cache);
+      const { latest, channel, latestInRange, notes } = await lookup(dep, cache);
       if ( latestInRange && compareVersions(latestInRange, current) > 0 ) {
         changes.push({ module: mod.id, dependency: dep.name, from: current, to: latestInRange, kind: bumpKind(current, latestInRange), notes: notes(latestInRange) });
         text = setVerified(text, dep.anchor, latestInRange);
@@ -187,7 +192,7 @@ async function update() {
         }
       }
       if ( major(latest) > major(dep.compatibility.maximum ?? current) ) {
-        newMajors.push({ module: mod.id, dependency: dep.name, maximum: dep.compatibility.maximum, available: latest, notes: notes(latest) });
+        newMajors.push({ module: mod.id, dependency: dep.name, maximum: dep.compatibility.maximum, available: latest, channel, notes: notes(latest) });
       }
     }
     if ( !dryRun ) write(mod.manifestPath, text);
@@ -198,11 +203,11 @@ async function update() {
     console.log(`${dryRun ? "Would update" : "Updated"} verified compatibility:`);
     for ( const c of changes ) console.log(` - ${c.module}: ${c.dependency} ${c.from} → ${c.to}${c.kind === "minor" ? " (new minor version, review release notes)" : ""}`);
   } else console.log("All modules already verified against the newest stable releases.");
-  for ( const m of newMajors ) console.log(` ! ${m.module}: ${m.dependency} ${m.available} is available but the module declares maximum ${m.maximum}; manual review needed.`);
+  for ( const m of newMajors ) console.log(` ! ${m.module}: ${m.dependency} ${m.available} (${m.channel}) is available but the module declares maximum ${m.maximum}; manual review needed.`);
 
   // Machine-readable report for the workflow
   const title = changes.length ? `Verify ${[...new Set(changes.map(c => `${c.dependency} ${c.to}`))].join(", ")}` : "";
-  const majorTitle = newMajors.length ? `New major version available: ${[...new Set(newMajors.map(m => `${m.dependency} ${m.available}`))].join(", ")}` : "";
+  const majorTitle = newMajors.length ? `New major version available: ${[...new Set(newMajors.map(m => `${m.dependency} ${m.available} (${m.channel})`))].join(", ")}` : "";
   if ( option("--summary") ) fs.writeFileSync(option("--summary"), JSON.stringify({ changes, newMajors }, null, 2));
   if ( option("--body") ) fs.writeFileSync(option("--body"), prBody(changes));
   if ( option("--major-body") ) fs.writeFileSync(option("--major-body"), issueBody(newMajors));
@@ -233,15 +238,15 @@ function prBody(changes) {
 }
 
 function issueBody(newMajors) {
-  const rows = newMajors.map(m => `| ${m.module} | ${m.dependency} | ${m.maximum} | [${m.available}](${m.notes}) |`);
+  const rows = newMajors.map(m => `| ${m.module} | ${m.dependency} | ${m.maximum} | [${m.available}](${m.notes}) | ${m.channel} |`);
   return [
-    "A dependency has moved to a new major version beyond what a module declares as `compatibility.maximum`. Automated bumps stop at `maximum`, so this needs a human review of the breaking changes before `maximum` and `verified` are raised.",
+    "A dependency has a new major version beyond what a module declares as `compatibility.maximum`. Automated bumps stop at `maximum`, so this needs a human review of the breaking changes before `maximum` and `verified` are raised. Prototype and testing builds are reported as soon as they appear so there is time to test before the generation becomes stable.",
     "",
-    "| Module | Dependency | Declared maximum | Available |",
-    "| --- | --- | --- | --- |",
+    "| Module | Dependency | Declared maximum | Available | Channel |",
+    "| --- | --- | --- | --- | --- |",
     ...rows,
     "",
-    "Suggested steps: read the migration notes, run the test suite and the manual checklist in `docs/testing.md` against the new version, then raise `maximum` and `verified` in `module.json` (the evergreen check will tell you about any mirror that still needs updating)."
+    "Suggested steps: read the migration notes, run `npm run audit:api -- --docs <new generation docs>` once the API documentation for it is published, run the test suite and the manual checklist in `docs/testing.md` against the new version, then raise `maximum` and `verified` in `module.json` (the evergreen check reports any mirror that still needs updating). Until `maximum` is raised Foundry keeps the module disabled on the new generation rather than letting it break."
   ].join("\n");
 }
 

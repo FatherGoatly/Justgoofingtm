@@ -1,8 +1,11 @@
 name: Evergreen compatibility
 
-# Every week: find the newest stable Foundry build and the newest release of every related system,
-# bump "verified" within each module's "maximum", prove the suites still pass, and open a pull
-# request. A new major generation beyond "maximum" is reported as an issue instead of being applied.
+# Every week:
+#  - bump: find the newest stable Foundry build and the newest release of every related system, bump
+#    "verified" within each module's "maximum", prove the suites still pass, and open a pull request.
+#    A new generation beyond "maximum" (on any channel, prototype included) is reported as an issue.
+#  - audit: resolve every Foundry API the modules use against the current API documentation and open
+#    an issue when a symbol has disappeared or been deprecated, i.e. before an update breaks the module.
 
 on:
   schedule:
@@ -82,3 +85,38 @@ jobs:
           else
             gh issue create --title "$TITLE" --label evergreen --body-file "$RUNNER_TEMP/evergreen-major.md"
           fi
+
+  audit:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TITLE: "Foundry API audit: a symbol the modules use is missing or deprecated"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Audit the Foundry API surface the modules use
+        id: audit
+        continue-on-error: true
+        run: node utils/api-audit.mjs --body "$RUNNER_TEMP/audit.md"
+
+      - name: Open or update the audit issue
+        if: steps.audit.outcome == 'failure'
+        run: |
+          gh label create evergreen --description "Automated compatibility maintenance" --color 0E8A16 --force
+          existing=$(gh issue list --state open --label evergreen --search "\"$TITLE\" in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file "$RUNNER_TEMP/audit.md"
+          else
+            gh issue create --title "$TITLE" --label evergreen --body-file "$RUNNER_TEMP/audit.md"
+          fi
+          exit 1
+
+      - name: Close the audit issue once the audit passes again
+        if: steps.audit.outcome == 'success'
+        run: |
+          for n in $(gh issue list --state open --label evergreen --search "\"$TITLE\" in:title" --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "The API audit passes again on $(git rev-parse --short HEAD)."
+          done

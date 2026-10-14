@@ -22,6 +22,19 @@ jobs:
           node-version: 22
       - run: node utils/evergreen.mjs --check
 
+  api-audit:
+    name: Foundry API audit (advisory)
+    runs-on: ubuntu-latest
+    # Advisory here because it depends on the public documentation site; the weekly evergreen workflow
+    # runs the same audit as a blocking check and opens an issue when it fails.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: node utils/api-audit.mjs
+
   module:
     name: ${{ matrix.module }} (Node ${{ matrix.node }})
     runs-on: ubuntu-latest

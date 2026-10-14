@@ -12,6 +12,7 @@
     "validate:manifest": "node utils/validate-manifest.mjs",
     "evergreen:check": "node utils/evergreen.mjs --check",
     "evergreen:update": "node utils/evergreen.mjs --update",
+    "audit:api": "node utils/api-audit.mjs",
     "package": "node utils/package.mjs"
   },
   "devDependencies": {
