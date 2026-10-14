@@ -15,6 +15,7 @@ Run with `npm run check` (lint, manifest validation, curriculum validation, then
 | Unit: progress | `progress.test.js` | Empty record, validation with repair and warnings, migrations, merge strategies, summary, reconciliation, the service (recording, completion, achievements, export/import/inspect, corrupt store, reset) |
 | Unit: registry and drafts | `registry.test.js`, `drafts.test.js` | Bundle validity, ordering, prerequisites, availability, search, glossary links, broken macros, pack registration and rejection; draft limits, versions, restore, autosave |
 | Unit: diagnostics and compatibility | `diagnostics.test.js`, `compatibility.test.js` | Error explainer rules link to existing lessons and never invent, inspector safety, hook monitor cap, report formatting without secrets, version helpers, environment and requirement checks, adapters, Midi-QOL detection by surface, permissions |
+| Integration: module smoke | `tests/integration/module-smoke.test.js` | Imports every script module under a Foundry mock (load-time errors in the UI layer), checks that preloaded templates and manifest file references exist, that every localization key used in templates and scripts exists, and that every `data-action` has a handler |
 | Curriculum | `tests/curriculum/curriculum.test.js` | Validates the whole bundle (ten tiers, schema, cycles, ordering); renders every lesson and exercise; syntax-checks every code block; executes every runnable block (sandbox or emulator) and asserts declared outputs and errors; runs every code exercise's solution (must pass all tests) and starter (must fail); checks every declared answer of every non-code exercise and checkpoint; reproduces and repairs every broken macro |
 
 ### Results for this release (1.0.0)
@@ -24,7 +25,7 @@ Executed in the build container (Node 22, Linux) on 2026-10-14:
 ```
 npm run lint        0 errors, 0 warnings
 npm run validate    manifest OK; curriculum OK (0 issues)
-npm test            13 files, 540 tests, 0 failures (about 30 s)
+npm test            14 files, 545 tests, 0 failures (about 30 s)
 ```
 
 The curriculum suite executed 234 exercise solutions and starters, every runnable example in 57 lessons, 206 checkpoint questions and 15 broken macros. The sandbox and emulator code that ran under Node `worker_threads` is byte-for-byte the code the browser Web Worker runs.

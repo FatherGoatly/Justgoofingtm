@@ -17,7 +17,7 @@ First release.
 - The debugging workbench: error explainer, hook monitor, object inspector, diagnostics report, practice fixtures (create, reset, clean up: flagged documents only).
 - Module settings for access, player live execution, system lessons, default mode, editor font size, assessment requirement, assisted recording, notifications, open behaviour, export scope and live warning mode; keybinding, scene control, settings sidebar launcher, `/academy` chat command and a public API (`game.modules.get("gm-macro-academy").api`) with a curriculum pack registration point.
 - Documentation: user, beginner, developer, curriculum authoring, API compatibility, security, testing (with the manual release checklist), troubleshooting and architecture guides; ten tested example macros.
-- Automated tests: 540 tests across unit, curriculum, assessment and integration suites, run in CI with lint, manifest validation and packaging.
+- Automated tests: 545 tests across unit, curriculum, assessment and integration suites, run in CI with lint, manifest validation and packaging.
 
 ### Known limitations
 
