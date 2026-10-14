@@ -147,8 +147,10 @@ export function mergeProgress(existing, incoming, strategy="merge") {
     const cur = out.exercises[id];
     if ( !cur ) { out.exercises[id] = e; continue; }
     cur.attempts = [...cur.attempts, ...e.attempts].sort((a, b) => a.at - b.at).slice(-LIMITS.MAX_ATTEMPTS_PER_EXERCISE);
+    const bothPassed = cur.passed && e.passed;
+    // An independent pass on either side wins; otherwise the record that passed decides.
+    cur.assisted = bothPassed ? (cur.assisted && e.assisted) : (cur.passed ? cur.assisted : e.assisted);
     cur.passed = cur.passed || e.passed;
-    cur.assisted = cur.passed && e.passed ? (cur.assisted && e.assisted) : (cur.passed ? cur.assisted : e.assisted);
     cur.bestScore = Math.max(cur.bestScore, e.bestScore);
     cur.hintsUsed = Math.max(cur.hintsUsed, e.hintsUsed);
     cur.firstPassedAt = [cur.firstPassedAt, e.firstPassedAt].filter(Boolean).sort()[0] ?? null;

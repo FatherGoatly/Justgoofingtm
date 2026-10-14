@@ -142,9 +142,22 @@ export class CurriculumRegistry {
     if ( !lesson ) return [];
     const found = new Set();
     const scan = text => { for ( const m of String(text ?? "").matchAll(/\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g) ) { const t = m[1].trim(); if ( !t.startsWith("lesson:") ) found.add(slugify(t)); } };
+    const prose = [];
     for ( const s of lesson.sections ) for ( const b of s.blocks ) {
       if ( b.type === "term" ) found.add(slugify(b.term));
       scan(b.text); (b.items ?? []).forEach(scan); (b.annotations ?? []).forEach(a => scan(a.note));
+      if ( b.type === "code" ) continue;
+      if ( typeof b.text === "string" ) prose.push(b.text);
+      for ( const item of b.items ?? [] ) if ( typeof item === "string" ) prose.push(item);
+    }
+    // Glossary titles that appear as whole words in the lesson prose count as referenced terms too, so a lesson that
+    // explains hooks lists the "Hook" entry without the author having to write [[hook]] every time.
+    const text = prose.join("\n").toLowerCase();
+    if ( text ) for ( const term of this.glossary.values() ) {
+      const title = String(term.term ?? term.title ?? "").toLowerCase();
+      if ( title.length < 4 || found.has(term.slug) ) continue;
+      const re = new RegExp(`(^|[^a-z0-9])${title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(s|es)?([^a-z0-9]|$)`, "i");
+      if ( re.test(text) ) found.add(term.slug);
     }
     return [...found].map(s => this.glossary.get(s)).filter(Boolean);
   }
