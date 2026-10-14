@@ -77,9 +77,10 @@ export const PRACTICE_TOKENS = [
  * @param {"dnd5e"|"generic"} [options.system="dnd5e"]
  * @param {boolean} [options.combat=true]
  * @param {boolean} [options.gm=true]
+ * @param {string[]} [options.modules=[]]   Ids of optional integrations to mark as installed and active ("midi-qol")
  * @returns {object}
  */
-export function createPracticeSnapshot({ system="dnd5e", combat=true, gm=true }={}) {
+export function createPracticeSnapshot({ system="dnd5e", combat=true, gm=true, modules=[] }={}) {
   const gmUser = { id: "usrAcademyGM001", name: "Gamemaster", role: 4, isGM: true, color: "#ff8800", character: null };
   const playerOne = { id: "usrPlayerOne001", name: "Player One", role: 1, isGM: false, color: "#44ff88", character: "acaReginald01" };
   const playerTwo = { id: "usrPlayerTwo001", name: "Player Two", role: 1, isGM: false, color: "#44aaff", character: "acaMirabel0002" };
@@ -91,7 +92,12 @@ export function createPracticeSnapshot({ system="dnd5e", combat=true, gm=true }=
     user, users,
     system: system === "dnd5e" ? { id: "dnd5e", title: "Dungeons & Dragons Fifth Edition", version: "6.0.6" } : { id: "generic", title: "Generic System", version: "1.0.0" },
     foundryVersion: "14.369",
-    modules: [{ id: "gm-macro-academy", title: "The Game Master's Macro Academy", version: "1.0.0", active: true }],
+    modules: [
+      { id: "gm-macro-academy", title: "The Game Master's Macro Academy", version: "1.0.0", active: true, compatibility: { minimum: "14", verified: "14.369", maximum: "14" }, esmodules: ["scripts/main.js"] },
+      // An installed-but-disabled module last verified for an older generation: a realistic census subject.
+      { id: "legacy-token-tools", title: "Legacy Token Tools (example)", version: "0.9.4", active: false, compatibility: { minimum: "11", verified: "12", maximum: "12" }, esmodules: ["legacy.js"] },
+      ...(modules.includes("midi-qol") ? [{ id: "midi-qol", title: "Midi Quality of Life Improvements", version: "14.6.2", active: true, compatibility: { minimum: "14.369", verified: "14.369" }, esmodules: ["dist/midi-qol.js"], emulated: true }] : [])
+    ],
     scene: { id: "acaScene000001", uuid: "Scene.acaScene000001", name: "Academy Practice Yard", active: true, grid: { size: 100, distance: 5, units: "ft", type: 1 }, width: 3000, height: 2000, tokenIds: PRACTICE_TOKENS.map(t => t.id) },
     scenes: [{ id: "acaScene000001", name: "Academy Practice Yard", active: true, uuid: "Scene.acaScene000001" }, { id: "acaScene000002", name: "Tavern Cellar", active: false, uuid: "Scene.acaScene000002" }],
     actors: JSON.parse(JSON.stringify(PRACTICE_ACTORS)).map(a => {

@@ -27,7 +27,10 @@ export async function executeRequest(request, { runProgram, PreviewRuntime }) {
     if ( mode === "preview" ) {
       if ( !request.snapshot ) throw new Error("Preview mode requires a snapshot.");
       const rt = new PreviewRuntime(request.snapshot, { inputs: request.inputs ?? [], random: request.seed !== undefined ? seededRandom(request.seed) : Math.random, enforcePermissions: request.enforcePermissions !== false });
+      // In preview, globalThis.<name> resolves the emulated globals (as window.game does in Foundry) and still accepts
+      // learner-defined properties such as globalThis.gmTools, which stay private to this run.
       const globals = { ...sandboxGlobals(), ...rt.globals };
+      globals.globalThis = { ...rt.globals };
       const r = await runProgram({ code: request.code ?? "", globals, tests: request.tests ?? [] });
       return { mode, ...r, ...rt.results, timedOut: false };
     }

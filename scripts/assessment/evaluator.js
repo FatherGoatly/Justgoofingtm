@@ -265,6 +265,13 @@ function evaluateTest(tc, index, run, code) {
     const rs = (run.rolls ?? []).filter(r => !spec.formula || r.formula.replace(/\s+/g, "") === String(spec.formula).replace(/\s+/g, ""));
     return rs.length ? pass(`Rolled ${rs.map(r => `${r.formula} = ${r.total}`).join(", ")}`) : fail(`Expected a roll${spec.formula ? ` of ${spec.formula}` : ""} (new Roll("...").evaluate())`);
   }
+  if ( "expectMechanic" in tc ) {
+    // A recorded system/integration mechanic (e.g. { type: "midi-qol.applyTokenDamage" }); count defaults to "at least one".
+    const spec = tc.expectMechanic === true ? {} : tc.expectMechanic;
+    const ms = (run.mechanics ?? []).filter(m => !spec.type || m.type === spec.type);
+    if ( typeof spec.count === "number" ) return ms.length === spec.count ? pass(`${ms.length} ${spec.type ?? "mechanic"} call(s), as expected`) : fail(`Expected ${spec.count} ${spec.type ?? "mechanic"} call(s) but found ${ms.length}`);
+    return ms.length ? pass(`Mechanic used: ${ms.map(m => m.type).join(", ")}`) : fail(`Expected ${spec.type ? `the ${spec.type} mechanic` : "a system mechanic"} to be used`);
+  }
   if ( "expectHook" in tc ) {
     const spec = tc.expectHook === true ? {} : tc.expectHook;
     const hs = (run.hooks ?? []).filter(h => !spec.name || h.name === spec.name);

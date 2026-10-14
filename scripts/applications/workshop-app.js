@@ -262,7 +262,7 @@ export class WorkshopApplication extends HandlebarsApplicationMixin(ApplicationV
       try { return buildLiveSnapshot(); } catch(err) { Logger.report("Live snapshot", err, { notify: true }); }
     }
     const systemId = s.exercise?.snapshot === "practice-generic" ? "generic" : (game.system?.id === "dnd5e" || s.exercise?.requirements?.system?.id === "dnd5e" || s.lesson?.requirements?.system?.id === "dnd5e" ? "dnd5e" : (s.exercise ? "dnd5e" : (game.system?.id === "dnd5e" ? "dnd5e" : "generic")));
-    return createPracticeSnapshot({ system: s.exercise?.snapshot === "practice-generic" ? "generic" : systemId, gm: s.exercise?.snapshot === "practice-player" ? false : gm, combat: s.exercise?.snapshot !== "practice-nocombat" });
+    return createPracticeSnapshot({ system: s.exercise?.snapshot === "practice-generic" ? "generic" : systemId, gm: s.exercise?.snapshot === "practice-player" ? false : gm, combat: s.exercise?.snapshot !== "practice-nocombat", modules: s.exercise?.snapshot === "practice-midi" ? ["midi-qol"] : [] });
   }
 
   /* ---------------------------------------------------------------------------------------------------------- */

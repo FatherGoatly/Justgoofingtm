@@ -22,6 +22,7 @@ function snapshotFor(name) {
     case "practice-player": return createPracticeSnapshot({ gm: false });
     case "practice-generic": return createPracticeSnapshot({ system: "generic" });
     case "practice-nocombat": return createPracticeSnapshot({ combat: false });
+    case "practice-midi": return createPracticeSnapshot({ modules: ["midi-qol"] });
     default: return createPracticeSnapshot();
   }
 }

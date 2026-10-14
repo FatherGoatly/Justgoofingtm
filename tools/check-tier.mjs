@@ -18,7 +18,7 @@ for ( let n = 0; n <= 9; n++ ) {
 }
 let terms = null;
 try { const g = await import("../curriculum/glossary.js"); terms = new Set(g.GLOSSARY.map(t => t.slug)); } catch(_err) { /* ignore */ }
-const snapshotFor = name => name === "practice-player" ? createPracticeSnapshot({ gm: false }) : name === "practice-generic" ? createPracticeSnapshot({ system: "generic" }) : name === "practice-nocombat" ? createPracticeSnapshot({ combat: false }) : createPracticeSnapshot();
+const snapshotFor = name => name === "practice-player" ? createPracticeSnapshot({ gm: false }) : name === "practice-generic" ? createPracticeSnapshot({ system: "generic" }) : name === "practice-nocombat" ? createPracticeSnapshot({ combat: false }) : name === "practice-midi" ? createPracticeSnapshot({ modules: ["midi-qol"] }) : createPracticeSnapshot();
 const run = async ({ code, runtime, tests=[], inputs=[], snapshot, seed=11 }) => runInNodeWorker({ mode: runtime, code, tests, ...(runtime === "preview" ? { snapshot: snapshotFor(snapshot), inputs, seed } : {}) }, { timeoutMs: 4000 });
 const declared = ex => ({ "multiple-choice": ex.answer, "predict-output": Array.isArray(ex.answer) ? ex.answer[0] : ex.answer, "fill-blank": ex.blanks?.map(b => b.accept[0]), "identify-error": ex.answer, "reorder-steps": ex.answer, "api-discovery": ex.accept?.[0], "explain-code": { text: Array(80).fill("w").join(" "), rubric: ex.rubric?.map(r => r.id) }, "capstone": { text: Array(80).fill("w").join(" "), rubric: ex.rubric?.map(r => r.id) } })[ex.type];
 

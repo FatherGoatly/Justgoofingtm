@@ -44,7 +44,7 @@ export const RUBRIC_EXERCISE_TYPES = Object.freeze(["explain-code", "capstone"])
 export const TEST_KINDS = Object.freeze([
   "call", "expectOutput", "outputIncludes", "outputMatches", "expectNoError", "expectError", "expectChat",
   "expectNotification", "expectUpdate", "expectNoUpdate", "expectReturn", "returnMatches", "expectTimeout",
-  "expectDialog", "expectCreate", "expectRoll", "codeIncludes", "codeExcludes", "expectHook"
+  "expectDialog", "expectCreate", "expectRoll", "codeIncludes", "codeExcludes", "expectHook", "expectMechanic"
 ]);
 
 export const ACCESS_KEYS = Object.freeze(["reads", "writes", "creates", "mechanics"]);

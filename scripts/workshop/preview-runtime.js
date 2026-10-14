@@ -494,8 +494,23 @@ class EmulatedScene extends EmulatedDocument {
   }
 }
 
+/**
+ * Foundry extends Set.prototype with helpers (first, filter, map, find, some, every, reduce). The emulator provides them
+ * on the user's target set without touching the global prototype.
+ */
+class UserTargets extends Set {
+  first() { return this.values().next().value; }
+  filter(fn) { return [...this].filter(fn); }
+  map(fn) { return [...this].map(fn); }
+  find(fn) { return [...this].find(fn); }
+  some(fn) { return [...this].some(fn); }
+  every(fn) { return [...this].every(fn); }
+  reduce(fn, init) { return [...this].reduce(fn, init); }
+  get ids() { return new Set([...this].map(t => t.id)); }
+}
+
 class EmulatedUser extends EmulatedDocument {
-  constructor(data, rt) { super("User", data, rt); this.role = data.role ?? 1; this.color = data.color ?? "#ffffff"; this._characterId = data.character ?? null; this.active = true; this.targets = new Set(); }
+  constructor(data, rt) { super("User", data, rt); this.role = data.role ?? 1; this.color = data.color ?? "#ffffff"; this._characterId = data.character ?? null; this.active = true; this.targets = new UserTargets(); }
   get isGM() { return this.role >= 3; }
   get isSelf() { return this.id === this._rt.snapshot.user.id; }
   get character() { return this._characterId ? this._rt.globals.game.actors.get(this._characterId) ?? null : null; }
@@ -602,6 +617,58 @@ export class PreviewRuntime {
     };
   }
 
+  /**
+   * A stand-in for the Midi-QOL public surface (dnd6 branch 14.6.x) used by Tier 7 lessons. It implements only the
+   * functions listed in scripts/adapters/integrations/midi-qol.js, with simplified behaviour, and records every call as
+   * a mechanic of type "midi-qol.<name>" so exercises can assert that the integration path was taken. It is not Midi-QOL.
+   */
+  #buildMidiQOL(rt, { game, canvas }) {
+    const tokenOf = t => t?.document ? t : (t?.object ?? (t?.documentName === "Actor" ? t.getActiveTokens(true, false)[0] : null));
+    const record = (name, data={}) => rt.record("mechanics", { type: `midi-qol.${name}`, ...data });
+    const distance = (a, b) => canvas.grid.measurePath([a.center, b.center]).distance;
+    return {
+      emulated: true,
+      async applyTokenDamage(damageDetail, totalDamage, theTargets, item=null, saves=new Set(), options={}) {
+        const targets = [...(theTargets ?? [])].map(tokenOf).filter(Boolean);
+        const out = [];
+        for ( const t of targets ) {
+          if ( !t.actor ) continue;
+          const saved = saves instanceof Set ? saves.has(t) : false;
+          const parts = (damageDetail ?? []).map(d => ({ value: saved ? Math.floor((d.damage ?? d.value ?? 0) / 2) : (d.damage ?? d.value ?? 0), type: d.type ?? "untyped" }));
+          await t.actor.applyDamage(parts, { ...options });
+          out.push({ token: t, actor: t.actor, applied: parts.reduce((s, p) => s + p.value, 0) });
+        }
+        record("applyTokenDamage", { targets: targets.map(t => t.name), total: totalDamage, item: item?.name ?? null, saves: targets.filter(t => saves instanceof Set && saves.has(t)).map(t => t.name) });
+        return out;
+      },
+      async completeItemUse(item, config={}, options={}) {
+        record("completeItemUse", { item: item?.name ?? null, config: deepClone(config), options: deepClone(options) });
+        if ( typeof item?.use === "function" ) await item.use(config, { configure: false }, {});
+        return { item, targets: new Set([...game.user.targets]), hitTargets: new Set([...game.user.targets]), failedSaves: new Set(), emulated: true };
+      },
+      async completeActivityUse(activity, config={}, options={}) {
+        record("completeActivityUse", { activity: activity?.name ?? null, config: deepClone(config), options: deepClone(options) });
+        if ( typeof activity?.use === "function" ) await activity.use(config, { configure: false }, {});
+        return { activity, targets: new Set([...game.user.targets]), emulated: true };
+      },
+      findNearby(disposition, token, range, options={}) {
+        const origin = tokenOf(token);
+        if ( !origin ) return [];
+        const want = disposition === null || disposition === undefined ? null : (Array.isArray(disposition) ? disposition : [disposition]);
+        const near = canvas.tokens.placeables.filter(t => t !== origin && (!want || want.includes(t.document.disposition)) && (options.includeIncapacitated || (t.actor?.system?.attributes?.hp?.value ?? 1) > 0) && distance(origin, t) <= range);
+        record("findNearby", { origin: origin.name, range, found: near.map(t => t.name) });
+        return near;
+      },
+      getDistance(t1, t2) { const a = tokenOf(t1), b = tokenOf(t2); if ( !a || !b ) return -1; return distance(a, b); },
+      hasCondition(tokenOrActor, condition) {
+        const actor = tokenOrActor?.actor ?? tokenOrActor;
+        const has = Boolean(actor?.statuses?.has(String(condition).toLowerCase()));
+        record("hasCondition", { actor: actor?.name ?? null, condition, has });
+        return has;
+      }
+    };
+  }
+
   #buildGlobals() {
     const rt = this;
     const snap = this.snapshot;
@@ -639,8 +706,10 @@ export class PreviewRuntime {
       version: snap.foundryVersion ?? "14.369",
       release: { generation: 14, version: snap.foundryVersion ?? "14.369" },
       modules: {
-        get: id => { const m = (snap.modules ?? []).find(x => x.id === id); return m ? { id: m.id, title: m.title, version: m.version, active: Boolean(m.active), api: m.api ?? undefined } : undefined; },
+        get: id => { const m = (snap.modules ?? []).find(x => x.id === id); return m ? { id: m.id, title: m.title, version: m.version, active: Boolean(m.active), compatibility: deepClone(m.compatibility ?? {}), esmodules: [...(m.esmodules ?? [])], api: m.api ?? undefined } : undefined; },
         contents: (snap.modules ?? []).map(m => ({ ...m })),
+        get size() { return (snap.modules ?? []).length; },
+        has: id => (snap.modules ?? []).some(m => m.id === id),
         [Symbol.iterator]() { return (snap.modules ?? []).map(m => ({ ...m }))[Symbol.iterator](); }
       },
       settings: {
@@ -850,8 +919,12 @@ export class PreviewRuntime {
     const ItemStatic = { create: async (data, { parent }={}) => { if ( parent ) return (await parent.createEmbeddedDocuments("Item", [data]))[0]; rt.assertCreate("Item"); const i = new EmulatedItem({ ...data, id: data._id ?? randomID() }, rt, null); items.set(i.id, i); rt.record("creates", { documentName: "Item", data: deepClone(data) }); Hooks.callAll("createItem", i, {}, user.id); return i; }, get implementation() { return ItemStatic; }, documentName: "Item", updateDocuments: async (updates=[]) => { const out = []; for ( const u of updates ) { const doc = items.get(u._id); if ( !doc ) throw new Error(`No Item with id ${u._id}`); const { _id, ...rest } = u; await doc.update(rest); out.push(doc); } rt.record("mechanics", { type: "batchUpdate", documentName: "Item", count: updates.length }); return out; } };
     const MacroStatic = { create: async data => { if ( !user.can("MACRO_SCRIPT") && (data.type ?? "script") === "script" ) throw new Error("Permission denied: your user cannot create script macros."); const m = new EmulatedDocument("Macro", { ...data, id: data._id ?? randomID() }, rt); m.command = data.command ?? ""; m.type = data.type ?? "script"; macros.set(m.id, m); rt.record("creates", { documentName: "Macro", data: deepClone(data) }); Hooks.callAll("createMacro", m, {}, user.id); return m; }, get implementation() { return MacroStatic; }, documentName: "Macro", canUserCreate: u => u.hasRole("PLAYER") };
 
+    const midi = (snap.modules ?? []).find(m => m.id === "midi-qol" && m.active);
+    const MidiQOL = midi ? this.#buildMidiQOL(rt, { game, canvas }) : undefined;
+
     return {
       game, ui, canvas, Hooks, CONST, CONFIG, foundry, fromUuid, fromUuidSync,
+      ...(MidiQOL ? { MidiQOL } : {}),
       ChatMessage: ChatMessageEmu, Roll: RollEmu, Actor: ActorStatic, Item: ItemStatic, Macro: MacroStatic,
       Dialog: deprecated("Dialog", "foundry.applications.api.DialogV2"),
       renderTemplate: () => { throw new Error("The global renderTemplate was deprecated in V13. Use foundry.applications.handlebars.renderTemplate instead (and note the emulator does not render templates)."); },
