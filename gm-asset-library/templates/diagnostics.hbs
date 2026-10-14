@@ -1,0 +1,48 @@
+<section class="gmal-diagnostics-body scrollable">
+  <div class="gmal-preview-toolbar">
+    <button type="button" class="gmal-tool" data-action="refresh"><i class="fa-solid fa-rotate" aria-hidden="true"></i> {{localize "GMAL.Refresh"}}</button>
+    <button type="button" class="gmal-tool" data-action="copyReport"><i class="fa-solid fa-copy" aria-hidden="true"></i> {{localize "GMAL.Diagnostics.CopyReport"}}</button>
+    <button type="button" class="gmal-tool" data-action="clearCaches"><i class="fa-solid fa-broom" aria-hidden="true"></i> {{localize "GMAL.Diagnostics.ClearCaches"}}</button>
+  </div>
+
+  <h3>{{localize "GMAL.Diagnostics.Environment"}}</h3>
+  <dl class="gmal-doc-meta">
+    <dt>{{localize "GMAL.Diagnostics.Module"}}</dt><dd>{{report.module.id}} v{{report.module.version}}</dd>
+    <dt>Foundry</dt><dd>{{report.foundry.version}}{{#if report.foundry.system}} · {{report.foundry.system}} {{report.foundry.systemVersion}}{{/if}}</dd>
+    <dt>{{localize "GMAL.Diagnostics.User"}}</dt><dd>{{report.permissions.user}} · {{#if report.permissions.isGM}}GM{{else}}{{localize "GMAL.Diagnostics.Player"}}{{/if}} · {{localize "GMAL.Diagnostics.Policy"}}: {{report.permissions.policy}} · {{localize "GMAL.Diagnostics.FileAccess"}}: {{#if report.permissions.files}}✓{{else}}✗{{/if}} · {{localize "GMAL.Diagnostics.SharedEdit"}}: {{#if report.permissions.sharedOrganization}}✓{{else}}✗{{/if}}</dd>
+    <dt>{{localize "GMAL.Diagnostics.Caches"}}</dt><dd>{{#if report.caches.persistent}}IndexedDB{{else}}{{localize "GMAL.Diagnostics.MemoryOnly"}}{{/if}} · {{report.caches.thumbnailUrls}} {{localize "GMAL.Diagnostics.LiveThumbnails"}} · {{report.caches.pendingMetadata}} {{localize "GMAL.Diagnostics.PendingProbes"}}</dd>
+  </dl>
+
+  <h3>{{localize "GMAL.Diagnostics.Catalog"}}</h3>
+  {{#if report.catalog}}
+  <p>{{localize "GMAL.Diagnostics.Status"}}: <strong>{{report.catalog.status}}</strong> · {{report.catalog.size}} {{localize "GMAL.Diagnostics.Entries"}}{{#if report.catalog.fromCache}} · {{localize "GMAL.Diagnostics.FromCache"}}{{/if}}{{#if report.catalog.finishedAgo}} · {{localize "GMAL.Diagnostics.Finished"}} {{report.catalog.finishedAgo}}{{/if}}</p>
+  <table class="gmal-table">
+    <thead><tr><th>{{localize "GMAL.Diagnostics.Source"}}</th><th>{{localize "GMAL.Diagnostics.Status"}}</th><th>{{localize "GMAL.Diagnostics.Entries"}}</th><th>{{localize "GMAL.Diagnostics.Failed"}}</th><th>{{localize "GMAL.Diagnostics.Skipped"}}</th></tr></thead>
+    <tbody>
+    {{#each report.adapters}}
+      <tr><td>{{label}}</td><td>{{status}}{{#if truncated}} ({{localize "GMAL.Diagnostics.Truncated"}}){{/if}}{{#if availability}} — {{availability}}{{/if}}{{#if error}} — {{error}}{{/if}}</td><td>{{count}}</td><td>{{failed}}</td><td>{{skipped}}</td></tr>
+      {{#each failures}}<tr class="gmal-failure"><td colspan="5">{{#if storage}}{{storage}}:{{target}}{{else}}{{pack}}{{documentName}}{{/if}} — {{message}}</td></tr>{{/each}}
+    {{/each}}
+    </tbody>
+  </table>
+  {{else}}<p>{{localize "GMAL.Diagnostics.NoCatalog"}}</p>{{/if}}
+
+  <h3>{{localize "GMAL.Diagnostics.Counters"}}</h3>
+  <dl class="gmal-doc-meta">
+    <dt>{{localize "GMAL.Diagnostics.FailedSources"}}</dt><dd>{{report.counters.failedSources}}</dd>
+    <dt>{{localize "GMAL.Diagnostics.PreviewFailures"}}</dt><dd>{{report.counters.previewFailures}}</dd>
+    <dt>{{localize "GMAL.Diagnostics.ActionFailures"}}</dt><dd>{{report.counters.actionFailures}}</dd>
+    <dt>{{localize "GMAL.Diagnostics.DuplicateGroups"}}</dt><dd>{{report.duplicates}}</dd>
+  </dl>
+
+  <h3>{{localize "GMAL.Diagnostics.Unsupported"}}</h3>
+  {{#if report.unsupported.length}}<ul class="gmal-inline-list">{{#each report.unsupported}}<li>.{{ext}} × {{count}}</li>{{/each}}</ul>{{else}}<p>{{localize "GMAL.Diagnostics.None"}}</p>{{/if}}
+
+  <h3>{{localize "GMAL.Diagnostics.Extensions"}}</h3>
+  {{#if report.extensions.length}}<ul>{{#each report.extensions}}<li>{{kind}}: {{id}}{{#if module}} ({{module}}){{/if}}</li>{{/each}}</ul>{{else}}<p>{{localize "GMAL.Diagnostics.NoExtensions"}}</p>{{/if}}
+
+  <h3>{{localize "GMAL.Diagnostics.RecentLog"}}</h3>
+  <table class="gmal-table gmal-log">
+    <tbody>{{#each recent}}<tr class="level-{{level}}"><td>{{time}}</td><td>{{level}}</td><td>{{message}}</td><td class="gmal-log-data">{{data}}</td></tr>{{/each}}</tbody>
+  </table>
+</section>

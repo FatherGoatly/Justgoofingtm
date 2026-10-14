@@ -1,0 +1,15 @@
+<section class="gmal-viewer-body">
+  <header class="gmal-viewer-header">
+    <button type="button" class="gmal-tool" data-action="backToGrid" title="{{localize "GMAL.Viewer.Back"}}" aria-label="{{localize "GMAL.Viewer.Back"}}"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i></button>
+    <button type="button" class="gmal-tool" data-action="prev" title="{{localize "GMAL.Viewer.Previous"}}" aria-label="{{localize "GMAL.Viewer.Previous"}}" {{#unless hasPrev}}disabled{{/unless}}><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+    <span class="gmal-viewer-position" aria-live="polite">{{position}}</span>
+    <button type="button" class="gmal-tool" data-action="next" title="{{localize "GMAL.Viewer.Next"}}" aria-label="{{localize "GMAL.Viewer.Next"}}" {{#unless hasNext}}disabled{{/unless}}><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
+    <h2 class="gmal-viewer-name" title="{{record.path}}">{{record.name}}</h2>
+    <button type="button" class="gmal-tool gmal-favorite {{#if isFavorite}}active{{/if}}" data-action="favorite" title="{{localize "GMAL.Action.ToggleFavorite"}}" aria-label="{{localize "GMAL.Action.ToggleFavorite"}}" aria-pressed="{{#if isFavorite}}true{{else}}false{{/if}}"><i class="{{#if isFavorite}}fa-solid{{else}}fa-regular{{/if}} fa-star" aria-hidden="true"></i></button>
+  </header>
+  <div class="gmal-viewer-stage" aria-live="polite"></div>
+  <footer class="gmal-viewer-footer">
+    <dl class="gmal-viewer-meta"></dl>
+    <div class="gmal-viewer-actions" role="toolbar" aria-label="{{localize "GMAL.Viewer.Actions"}}"></div>
+  </footer>
+</section>

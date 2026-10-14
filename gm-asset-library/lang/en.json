@@ -1,0 +1,152 @@
+{
+  "GMAL": {
+    "Title": "GM Asset Library",
+    "NoAccess": "The GM Asset Library is restricted to Game Masters in this world.",
+    "NotReady": "The GM Asset Library is still starting up. Try again in a moment.",
+    "NoSharedEdit": "Only users who can modify world settings can change shared collections, tags, aliases, notes and roles.",
+    "OpenSettings": "Module settings",
+    "Loading": "Loading…",
+    "Refresh": "Refresh",
+    "Retry": "Retry",
+    "Keybinding": { "Open": { "Name": "Open the GM Asset Library", "Hint": "Opens or focuses the asset browser window." } },
+
+    "Toolbar": {
+      "Label": "Asset library toolbar",
+      "ToggleSidebar": "Show or hide the navigation",
+      "ToggleDetails": "Show or hide the details panel",
+      "ViewMode": "View mode",
+      "ThumbnailSize": "Thumbnail size",
+      "Refresh": "Rescan all sources (files, world documents, compendiums)",
+      "CancelIndex": "Stop the running scan. Everything found so far is kept.",
+      "Cancel": "Stop scan"
+    },
+    "Search": { "Placeholder": "Search names, paths, tags, notes… (type:image tag:undead -token)", "Label": "Search assets" },
+    "Sort": {
+      "Label": "Sort order", "NameAsc": "Name (A–Z)", "NameDesc": "Name (Z–A)", "Recent": "Recently used", "Discovered": "Recently discovered", "Type": "Type", "Source": "Source", "Folder": "Folder",
+      "SizeDesc": "File size (largest first)", "DimensionsDesc": "Dimensions (largest first)", "DurationDesc": "Duration (longest first)", "Favorite": "Favorites first"
+    },
+    "Grid": { "Label": "Assets" },
+    "Selection": { "SelectVisible": "Select visible", "SelectAllMatching": "Select all matching", "Clear": "Clear selection" },
+    "Status": {
+      "Results": "{count} results", "Selected": "{count} selected", "Indexing": "Indexing {source}: {count} found…", "IndexingGeneric": "Indexing…",
+      "Interrupted": "Scan stopped early — results may be incomplete", "FromCache": "File list from cache — press Refresh to rescan", "CheckingReferences": "Checking world references…",
+      "Truncated": "File limit reached — raise it in the module settings or narrow the scan roots", "Unavailable": "Not available: {sources}"
+    },
+    "Empty": {
+      "Indexing": "Scanning your assets…", "IndexingHint": "Results appear as soon as they are found.",
+      "NoCatalog": "Nothing has been indexed yet", "NoCatalogHint": "Press Refresh to scan the configured file roots, world documents and compendiums.",
+      "NoFavorites": "No favorites yet", "NoFavoritesHint": "Click the star on any asset to keep it here.",
+      "EmptyCollection": "This collection is empty", "EmptyCollectionHint": "Select assets and use “Add to collection”, or drag them here from another view.",
+      "NoDuplicates": "No duplicate candidates found", "NoDuplicatesHint": "Candidates are based on identical paths, filenames, or matching size and dimensions — never on image contents.",
+      "NoMissing": "No missing file references detected", "NoMissingHint": "References outside the scanned roots are marked as unchecked rather than missing.",
+      "CheckingMissing": "Checking references…",
+      "NoMatches": "No assets match", "NoMatchesHint": "Try fewer words, clear the filters, or widen the search scope.",
+      "Nothing": "Nothing to show", "NothingHint": "This category has no assets in the indexed sources."
+    },
+    "Card": { "Missing": "Missing" },
+
+    "Nav": { "Label": "Asset navigation", "Browse": "Browse", "Personal": "Personal", "Favorites": "Favorites", "Recent": "Recent", "Collections": "Collections", "SavedSearches": "Saved searches", "Health": "Asset health", "Duplicates": "Duplicate candidates", "MissingReferences": "Missing references" },
+    "Category": { "All": "All assets", "Images": "Images", "Maps": "Maps", "Tokens": "Tokens", "Portraits": "Portraits", "Tiles": "Tiles & effects", "Audio": "Audio", "Video": "Video", "Documents": "Documents", "FoundryDocuments": "Foundry documents", "Compendiums": "Compendiums" },
+    "Type": { "image": "Image", "audio": "Audio", "video": "Video", "pdf": "PDF", "text": "Text", "font": "Font", "actor": "Actor", "item": "Item", "scene": "Scene", "journal": "Journal", "playlist": "Playlist", "table": "Roll table", "cards": "Cards", "macro": "Macro", "adventure": "Adventure", "other": "Other file" },
+    "Role": { "map": "Map", "token": "Token", "portrait": "Portrait", "tile": "Tile", "effect": "Effect", "handout": "Handout", "none": "No role", "auto": "Infer from folder name", "Prompt": "Role for the selected image(s)" },
+    "MapType": { "Battle": "Battle map", "Dungeon": "Dungeon map", "City": "City map", "Interior": "Interior", "Exterior": "Exterior", "Regional": "Regional / world map", "Unknown": "Unknown map type", "Prompt": "Map type" },
+    "Source": { "File": "File", "World": "World document", "Compendium": "Compendium entry", "WorldShort": "World", "CompendiumShort": "Pack", "CoreShort": "Core" },
+
+    "Filters": {
+      "Title": "Filters", "Clear": "Clear all", "Quick": "Quick filters", "FavoritesOnly": "Favorites only", "MissingPreview": "No preview available", "MissingSource": "Source missing or unreadable", "DuplicateCandidates": "Duplicate candidates",
+      "Type": "Type", "Source": "Source", "Storage": "Storage", "Role": "Image role", "MapType": "Map type", "DocumentType": "Document type", "Pack": "Compendium", "Extension": "Extension", "Tags": "Tags",
+      "Dimensions": "Dimensions", "MinWidth": "Min width", "MinHeight": "Min height", "MaxWidth": "Max width", "Aspect": "Aspect", "AnyAspect": "Any", "Landscape": "Landscape", "Portrait": "Portrait", "Square": "Square",
+      "DimensionsHint": "Dimensions are read when an image is shown or selected; unmeasured images never match a dimension filter.",
+      "Duration": "Duration (seconds)", "MinDuration": "Min", "MaxDuration": "Max", "FileSize": "File size", "MinSizeKb": "Min (KB)", "MaxSizeKb": "Max (KB)"
+    },
+
+    "Details": {
+      "Label": "Asset details", "Title": "Details", "Empty": "Select an asset to see its details and actions.", "SelectedCount": "{count} assets selected", "BulkHint": "Actions below apply to every selected asset. Changes to campaign documents always ask for confirmation first.",
+      "Name": "Name", "OriginalName": "Original name", "Type": "Type", "Role": "Role", "RoleInferred": "from folder name", "RoleUser": "set by you", "DocumentType": "Document", "Source": "Source", "Pack": "Pack id", "Folder": "Folder", "Path": "Path", "Uuid": "UUID",
+      "Dimensions": "Dimensions", "Duration": "Duration", "Size": "File size", "Modified": "Modified", "Discovered": "Discovered", "LastUsed": "Last used", "Verified": "Verified", "NotChecked": "Not checked yet — shown or selected files are verified automatically",
+      "Tags": "Tags", "Collections": "Collections", "Note": "Note", "Summary": "Summary", "Contents": "Contents ({count})",
+      "MissingFile": "This file could not be loaded. It may have been moved, deleted, or you may lack access to it.", "MissingEntry": "This entry is organized (favorite, collection, tag…) but no longer exists in the catalog.",
+      "Ref": { "Portrait": "Portrait image", "Token": "Token image", "Background": "Background", "Foreground": "Foreground", "Thumb": "Thumbnail", "Ref1": "Reference 1", "Ref2": "Reference 2", "Ref3": "Reference 3", "Ref4": "Reference 4", "Ref5": "Reference 5", "Ref6": "Reference 6" }
+    },
+
+    "ActionGroup": { "preview": "Preview", "copy": "Copy", "organize": "Organize", "use": "Use in Foundry", "document": "Document", "health": "Asset health", "danger": "Cleanup" },
+    "Action": {
+      "Preview": "Preview", "Open": "Open", "OpenPlaylist": "Open playlist", "ViewScene": "View scene", "ActivateScene": "Activate scene",
+      "CopyPath": "Copy file path", "CopyPathLabel": "File path", "CopyUrl": "Copy browser URL", "CopyUrlLabel": "Browser URL", "CopyUuid": "Copy UUID", "CopyLink": "Copy document link", "CopyLinkLabel": "Document link", "CopyName": "Copy name", "CopySummary": "Copy metadata summary", "CopySummaryLabel": "Metadata summary",
+      "Copied": "{label} copied to clipboard.", "CopyFailed": "Clipboard access was denied by the browser.",
+      "ToggleFavorite": "Favorite", "AddToCollection": "Add to collection…", "RemoveFromCollection": "Remove from this collection", "AddTags": "Add tags…", "RemoveTags": "Remove a tag…", "SetAlias": "Set alias…", "SetNote": "Edit note…", "SetRole": "Set role…",
+      "SetActorPortrait": "Use as Actor portrait…", "SetActorToken": "Use as Actor token image…", "ApplyToControlledTokens": "Apply to controlled tokens…", "CreateScene": "Create scene from image…", "SetSceneBackground": "Use as scene background…", "CreateTile": "Create tile in current scene…", "AddToPlaylist": "Add to playlist…",
+      "ImportToWorld": "Import into world…", "FindUsages": "Find where it is used", "Verify": "Verify file", "Reveal": "Show in File Picker", "Forget": "Remove from organization…",
+      "MutatesHint": "This action changes campaign data and will ask for confirmation.", "NotAvailable": "That action is not available for the selected assets.", "Failed": "{action} failed: {error}",
+      "DocumentNotFound": "The document could not be loaded.", "NoPermission": "You do not have permission to modify that document.", "NoControlledTokens": "No controlled tokens that you can modify.", "ImportUnsupported": "This compendium entry cannot be imported from here.",
+      "ActorUpdated": "Updated {name}.", "TokensUpdated": "Updated {count} token(s).", "SceneCreated": "Scene “{name}” created.", "BackgroundSet": "Background of “{name}” replaced.", "TileCreated": "Tile added to “{scene}”.", "SoundAdded": "Sound added to playlist “{name}” (not playing).", "Imported": "Imported “{name}” into the world."
+    },
+    "Confirm": {
+      "ActivateScene": "Activate the scene “{name}” for all players?",
+      "SetPortrait": "Replace the portrait of “{name}”?", "SetToken": "Replace the prototype token image of “{name}”? Existing tokens on scenes are not changed.",
+      "ApplyTokens": "Set the image of {count} controlled token(s) to “{path}”? Only the tokens on the current scene listed below are changed.",
+      "CreateScene": "Create a new scene with “{path}” as its background. The image is not modified.", "CreateSceneHint": "The grid size below is a starting value. The module does not know the real grid of the map — adjust it in the scene configuration.",
+      "CreateTile": "Add a tile using “{path}” to the scene “{scene}”?", "SetBackground": "Replace the background image of the scene “{name}”?",
+      "AddSound": "Add “{path}” to the playlist “{name}”? The sound is added stopped; nothing starts playing.",
+      "Import": "Import the {type} “{name}” from “{pack}” into this world? This creates a new world document.",
+      "Forget": "Remove favorites, tags, notes, aliases and collection memberships for {count} missing entr(y/ies)? Files and documents are not touched."
+    },
+    "Dialog": { "OK": "OK", "Continue": "Continue", "Replace": "Replace", "Current": "Current", "New": "New", "AffectsCount": "Applies to {count} asset(s).", "AndMore": "and {count} more" },
+    "Actor": { "Choose": "Actor to modify" },
+    "Scene": { "Choose": "Scene to modify", "Width": "Width (px)", "Height": "Height (px)", "GridSize": "Grid size (px)", "GridHint": "Starting value only — the module does not infer the map's actual grid.", "OpenConfig": "Open the scene configuration afterwards" },
+    "Playlist": { "Choose": "Playlist", "New": "New playlist", "NewEllipsis": "New playlist…", "NoAutoplay": "The sound is added stopped. Nothing is played for your players." },
+    "Collections": {
+      "New": "New collection", "NewEllipsis": "New collection…", "Name": "Collection name", "Choose": "Collection", "Rename": "Rename collection", "Duplicate": "Duplicate collection", "MoveUp": "Move up", "MoveDown": "Move down", "Delete": "Delete collection",
+      "DeleteConfirm": "Delete the collection “{name}”? Its {count} asset(s) are not deleted; only the grouping disappears.", "Added": "Added {count} asset(s) to “{name}”.", "AddSelectedPrompt": "Add the {count} selected asset(s) to “{name}”?", "Empty": "No collections yet", "None": "Not in any collection"
+    },
+    "SavedSearches": { "Save": "Save this search", "Rename": "Rename saved search", "Update": "Update with current search", "Duplicate": "Duplicate saved search", "Delete": "Delete saved search", "Empty": "No saved searches" },
+    "Tags": { "Prompt": "Tags (comma separated)", "ChooseRemove": "Tag to remove", "Remove": "Remove tag {tag}", "None": "No tags" },
+    "Alias": { "Prompt": "Alias (searchable display name)", "Hint": "The file keeps its original name “{name}”. Leave empty to remove the alias." },
+    "Note": { "Prompt": "Note (searchable)" },
+    "Usages": { "Title": "Used by {count} document(s)", "None": "No world document references this file within the searched scope.", "Scope": "Searched" },
+    "Missing": { "Missing": "Missing", "Unchecked": "Could not be checked", "ReferencedBy": "Referenced by {count} document(s)" },
+
+    "Viewer": { "Title": "Preview", "Back": "Back to the grid", "Previous": "Previous asset", "Next": "Next asset", "Actions": "Asset actions" },
+    "Preview": {
+      "ZoomIn": "Zoom in", "ZoomOut": "Zoom out", "Fit": "Fit to window", "ActualSize": "Actual size (100%)", "Checkerboard": "Toggle checkerboard background", "GridOverlay": "Toggle grid overlay", "GridSize": "Grid overlay cell size (px)", "GridOverlayHint": "Overlay only — not the scene grid.", "GridOverlayNote": "grid overlay {size}px", "ImageTools": "Image preview tools",
+      "Stop": "Stop", "Loop": "Loop", "AudioLocalOnly": "Preview playback is local to you and is never broadcast to players.", "VideoMutedHint": "Video previews start muted and never autoplay. Use the controls to play.",
+      "MediaDisabled": "Audio and video previews are disabled in the module settings.", "PdfHint": "Displayed with your browser's PDF viewer.", "Truncated": "preview truncated", "NoVisual": "This document has no image to preview.",
+      "ImageFailed": "The image could not be loaded.", "MediaFailed": "The audio could not be loaded or decoded.", "VideoFailed": "The video could not be loaded or its codec is unsupported by this browser.", "Failed": "The preview failed.", "Unsupported": "No preview is available for .{ext} files.",
+      "Reason": { "Missing": "The file appears to be missing or inaccessible.", "Remote": "The file is hosted remotely; it may be blocked by CORS or network rules.", "Unsupported": "This format is not supported by the browser.", "Unknown": "The file exists in the index but could not be decoded. It may be corrupt, moved, or protected." }
+    },
+
+    "Diagnostics": {
+      "Title": "Asset Library Diagnostics", "Report": "Diagnostics report", "CopyReport": "Copy report", "ClearCaches": "Clear caches", "CachesCleared": "Thumbnail, metadata and catalog caches were cleared.",
+      "Environment": "Environment", "Module": "Module", "User": "User", "Player": "Player", "Policy": "access policy", "FileAccess": "file browsing", "SharedEdit": "shared organization edits", "Caches": "Caches", "MemoryOnly": "memory only (IndexedDB unavailable)", "LiveThumbnails": "live thumbnails", "PendingProbes": "pending metadata probes",
+      "Catalog": "Catalog", "Status": "Status", "Entries": "entries", "FromCache": "file list loaded from cache", "Finished": "finished", "Source": "Source", "Failed": "Failed", "Skipped": "Skipped", "Truncated": "limit reached", "NoCatalog": "The catalog has not been built yet.",
+      "Counters": "Counters", "FailedSources": "Failed sources", "PreviewFailures": "Preview failures", "ActionFailures": "Action failures", "DuplicateGroups": "Duplicate candidate groups",
+      "Unsupported": "Unsupported file types found", "None": "None", "Extensions": "Registered extensions", "NoExtensions": "No other module has registered adapters or actions.", "RecentLog": "Recent log"
+    },
+    "Availability": { "NoFilePermission": "You lack the “Browse File Explorer” permission, so files cannot be listed.", "NoFilePicker": "The FilePicker API is unavailable.", "NotReady": "The game is not ready yet." },
+
+    "Settings": {
+      "AccessPolicy": { "Name": "Who can open the library (world)", "Hint": "GM only by default. Players never see documents or compendiums they cannot observe, and need Foundry's file browsing permission to see files.", "GM": "Game Masters only", "Trusted": "Trusted players and GMs", "All": "Everyone" },
+      "FileRoots": { "Name": "File roots to scan (world)", "Hint": "Comma separated, as source:path. Examples: data: (all user data), data:assets, data:worlds/my-world, public:icons, s3:bucket-folder. Only locations the File Picker can see are reachable." },
+      "ExcludedFolders": { "Name": "Excluded folders (world)", "Hint": "Comma separated folder names or paths skipped during the file scan. Default skips the modules and systems folders, which contain thousands of package files." },
+      "IncludeWorldDocuments": { "Name": "Include world documents (world)", "Hint": "Catalog Actors, Items, Scenes, Journals, Playlists, Roll Tables, Cards and Macros of this world that the user can observe." },
+      "IncludeCompendiums": { "Name": "Include compendiums (world)", "Hint": "Catalog the index of every compendium pack visible to the user. Only the lightweight index is loaded, never the full documents." },
+      "CompendiumTypes": { "Name": "Compendium document types (world)", "Hint": "Comma separated document types to index from compendiums." },
+      "MaxFiles": { "Name": "Maximum files per scan (world)", "Hint": "The scan stops when this many files were found and the status bar says so. Tested up to 50,000 synthetic entries." },
+      "ScanConcurrency": { "Name": "Parallel directory requests (world)", "Hint": "How many directory listings are requested from the server at once during a scan." },
+      "AutoIndex": { "Name": "Rescan files every time the library opens (world)", "Hint": "Off: the cached file list is shown instantly and documents are refreshed; press Refresh to rescan files. On: files are rescanned on every open." },
+      "MediaPreviews": { "Name": "Allow audio and video previews (world)", "Hint": "Previews play locally in the viewer only and are never broadcast to players." },
+      "GenerateThumbnails": { "Name": "Generate small thumbnails (world)", "Hint": "Downscaled thumbnails are generated once per client and cached in the browser (IndexedDB) so large images are not decoded repeatedly. Off: the original images are shown scaled down." },
+      "ProbeFileSizes": { "Name": "Read file sizes (world)", "Hint": "Issues a lightweight HEAD request for files shown or selected to read their size and modification date. Remote (S3) files are not probed." },
+      "Debug": { "Name": "Debug logging (world)", "Hint": "Write verbose diagnostics to the console." },
+      "ViewMode": { "Name": "Default view (personal)", "Hint": "Thumbnail grid or compact list.", "Grid": "Grid", "List": "List" },
+      "ThumbnailSize": { "Name": "Thumbnail size (personal)", "Hint": "Width of grid thumbnails in pixels." },
+      "ShowSidebar": { "Name": "Show navigation sidebar (personal)", "Hint": "" },
+      "ShowDetails": { "Name": "Show details panel (personal)", "Hint": "" },
+      "Sort": { "Name": "Default sort order (personal)", "Hint": "" },
+      "SearchScope": { "Name": "Default search scope (personal)", "Hint": "Which sources global search covers by default.", "All": "All sources", "Files": "Files only", "World": "World documents only", "NoCompendium": "Everything except compendiums" },
+      "ShowCardMeta": { "Name": "Show metadata on grid cards (personal)", "Hint": "Shows dimensions, duration and size under the name. Otherwise this information is in the details panel." },
+      "StoreFavorites": { "Name": "Favorites store", "Hint": "" }, "StoreRecents": { "Name": "Recents store", "Hint": "" }, "StoreSavedSearches": { "Name": "Saved searches store", "Hint": "" },
+      "StoreCollections": { "Name": "Collections store", "Hint": "" }, "StoreTags": { "Name": "Tags store", "Hint": "" }, "StoreAliases": { "Name": "Aliases store", "Hint": "" }, "StoreNotes": { "Name": "Notes store", "Hint": "" }, "StoreRoles": { "Name": "Roles store", "Hint": "" }
+    }
+  }
+}

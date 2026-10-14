@@ -2,7 +2,7 @@ import stylistic from "@stylistic/eslint-plugin";
 import globals from "globals";
 
 export default [
-  { ignores: ["node_modules/**", "dist/**", "coverage/**"] },
+  { ignores: ["node_modules/**", "dist/**", "coverage/**", "gm-asset-library/**"] },
   {
     files: ["**/*.js", "**/*.mjs"],
     languageOptions: {

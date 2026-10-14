@@ -1,0 +1,60 @@
+<div class="gmal-shell">
+  <header class="gmal-toolbar" role="toolbar" aria-label="{{localize "GMAL.Toolbar.Label"}}">
+    <button type="button" class="gmal-tool" data-action="toggleSidebar" title="{{localize "GMAL.Toolbar.ToggleSidebar"}}" aria-label="{{localize "GMAL.Toolbar.ToggleSidebar"}}"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+    <div class="gmal-search-wrap">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+      <input type="search" class="gmal-search" placeholder="{{localize "GMAL.Search.Placeholder"}}" aria-label="{{localize "GMAL.Search.Label"}}" autocomplete="off" spellcheck="false">
+    </div>
+    <button type="button" class="gmal-tool gmal-filter-toggle" data-action="toggleFilters" title="{{localize "GMAL.Filters.Title"}}" aria-label="{{localize "GMAL.Filters.Title"}}" aria-expanded="false"><i class="fa-solid fa-filter" aria-hidden="true"></i><span class="gmal-filter-count" hidden></span></button>
+    <label class="gmal-toolbar-field"><span class="sr-only">{{localize "GMAL.Sort.Label"}}</span>
+      <select class="gmal-sort" aria-label="{{localize "GMAL.Sort.Label"}}">{{#each sorts}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>{{/each}}</select>
+    </label>
+    <label class="gmal-toolbar-field"><span class="sr-only">{{localize "GMAL.Settings.SearchScope.Name"}}</span>
+      <select class="gmal-scope" aria-label="{{localize "GMAL.Settings.SearchScope.Name"}}">
+        <option value="all">{{localize "GMAL.Settings.SearchScope.All"}}</option>
+        <option value="files">{{localize "GMAL.Settings.SearchScope.Files"}}</option>
+        <option value="world">{{localize "GMAL.Settings.SearchScope.World"}}</option>
+        <option value="noCompendium">{{localize "GMAL.Settings.SearchScope.NoCompendium"}}</option>
+      </select>
+    </label>
+    <div class="gmal-view-modes" role="group" aria-label="{{localize "GMAL.Toolbar.ViewMode"}}">
+      <button type="button" class="gmal-tool {{#if isGrid}}active{{/if}}" data-action="setViewMode" data-mode="grid" title="{{localize "GMAL.Settings.ViewMode.Grid"}}" aria-label="{{localize "GMAL.Settings.ViewMode.Grid"}}"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i></button>
+      <button type="button" class="gmal-tool {{#unless isGrid}}active{{/unless}}" data-action="setViewMode" data-mode="list" title="{{localize "GMAL.Settings.ViewMode.List"}}" aria-label="{{localize "GMAL.Settings.ViewMode.List"}}"><i class="fa-solid fa-list" aria-hidden="true"></i></button>
+    </div>
+    <label class="gmal-toolbar-field gmal-size-field" title="{{localize "GMAL.Toolbar.ThumbnailSize"}}"><i class="fa-solid fa-image" aria-hidden="true"></i>
+      <input type="range" class="gmal-thumb-size" min="96" max="340" step="4" aria-label="{{localize "GMAL.Toolbar.ThumbnailSize"}}">
+    </label>
+    <span class="gmal-toolbar-spacer"></span>
+    <button type="button" class="gmal-tool" data-action="saveSearch" title="{{localize "GMAL.SavedSearches.Save"}}" aria-label="{{localize "GMAL.SavedSearches.Save"}}"><i class="fa-solid fa-bookmark" aria-hidden="true"></i></button>
+    <button type="button" class="gmal-tool" data-action="refresh" title="{{localize "GMAL.Toolbar.Refresh"}}" aria-label="{{localize "GMAL.Toolbar.Refresh"}}"><i class="fa-solid fa-rotate" aria-hidden="true"></i></button>
+    <button type="button" class="gmal-tool gmal-cancel" data-action="cancelIndex" title="{{localize "GMAL.Toolbar.CancelIndex"}}" hidden><i class="fa-solid fa-stop" aria-hidden="true"></i> {{localize "GMAL.Toolbar.Cancel"}}</button>
+    <button type="button" class="gmal-tool" data-action="toggleDetails" title="{{localize "GMAL.Toolbar.ToggleDetails"}}" aria-label="{{localize "GMAL.Toolbar.ToggleDetails"}}"><i class="fa-solid fa-sidebar-flip" aria-hidden="true"></i></button>
+  </header>
+  <div class="gmal-progress" hidden><div class="gmal-progress-bar"></div></div>
+
+  <div class="gmal-main">
+    <nav class="gmal-sidebar" aria-label="{{localize "GMAL.Nav.Label"}}"><div class="gmal-sidebar-body"></div></nav>
+    <aside class="gmal-filters" aria-label="{{localize "GMAL.Filters.Title"}}"><div class="gmal-filter-body"></div></aside>
+    <section class="gmal-content">
+      <div class="gmal-grid-viewport" role="listbox" aria-multiselectable="true" aria-label="{{localize "GMAL.Grid.Label"}}" tabindex="0"></div>
+      <div class="gmal-empty" hidden>
+        <i class="fa-solid fa-images fa-3x" aria-hidden="true"></i>
+        <h3 class="gmal-empty-title"></h3>
+        <p class="gmal-empty-hint"></p>
+      </div>
+    </section>
+    <aside class="gmal-details" aria-label="{{localize "GMAL.Details.Label"}}">
+      <header class="gmal-details-header"><h3>{{localize "GMAL.Details.Title"}} <span class="gmal-details-count"></span></h3></header>
+      <div class="gmal-details-body"></div>
+    </aside>
+  </div>
+
+  <footer class="gmal-statusbar">
+    <span class="gmal-status-text" aria-live="polite"></span>
+    <span class="gmal-status-warnings" role="status" hidden></span>
+    <span class="gmal-toolbar-spacer"></span>
+    <button type="button" class="gmal-link" data-action="selectVisible">{{localize "GMAL.Selection.SelectVisible"}}</button>
+    <button type="button" class="gmal-link" data-action="selectAll">{{localize "GMAL.Selection.SelectAllMatching"}}</button>
+    <button type="button" class="gmal-link" data-action="clearSelection">{{localize "GMAL.Selection.Clear"}}</button>
+  </footer>
+</div>

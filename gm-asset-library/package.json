@@ -1,0 +1,23 @@
+{
+  "name": "gm-asset-library",
+  "version": "0.1.0",
+  "description": "Game Master's Visual Asset Library for Foundry VTT V14: a unified, visual-first browser for files, world documents and compendium content.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:bench": "GMAL_BENCH=1 vitest run tests/integration/benchmark.test.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "validate:manifest": "node utils/validate-manifest.mjs",
+    "package": "node utils/package.mjs"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "eslint": "^10.6.0",
+    "globals": "^17.7.0",
+    "jsdom": "^26.1.0",
+    "vitest": "^5.0.4"
+  }
+}

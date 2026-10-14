@@ -1,5 +1,7 @@
 # Stat Block Importer & Automation Engine (D&D 5e)
 
+> This repository also contains a second, independent Foundry V14 module: **[GM Asset Library](gm-asset-library/README.md)**, a visual-first browser for files, world documents and compendium assets. It lives in `gm-asset-library/` with its own manifest, tests and docs.
+
 A Foundry VTT **V14** module for the **D&D 5e system (v6.x)** that turns pasted or uploaded stat blocks into fully structured Actors and Items with validated, native-first automation.
 
 - **Inputs**: plain text, Markdown (including Homebrewery), sanitized HTML, the module's documented JSON schema, Foundry Actor/Item exports, and simple CSV item tables. PDF/DOCX text can be pasted after extraction; OCR is an optional, GM-configured provider (none is bundled).
