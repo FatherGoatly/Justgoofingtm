@@ -32,7 +32,8 @@ export function formatValue(v, depth=0) {
  * @returns {Console}
  */
 export function createConsole(output) {
-  const push = (prefix, args) => output.push(`${prefix}${args.map(a => formatValue(a)).join(" ")}`);
+  // Multi-line strings become one output entry per line, as the browser console displays them.
+  const push = (prefix, args) => { for ( const line of `${prefix}${args.map(a => formatValue(a)).join(" ")}`.split("\n") ) output.push(line); };
   return {
     log: (...a) => push("", a), info: (...a) => push("", a), debug: (...a) => push("", a),
     warn: (...a) => push("⚠ ", a), error: (...a) => push("✖ ", a),

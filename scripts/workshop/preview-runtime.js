@@ -183,6 +183,9 @@ class EmulatedDocument {
       this._rt.record("warnings", { type: "hook", message: `preUpdate${this.documentName} hook cancelled an update to ${this.name}.` });
       return this;
     }
+    // In Foundry the change is applied after a server round-trip; yielding here means code that forgets to await
+    // sees stale data in the emulator too, instead of being taught that updates are instantaneous.
+    await Promise.resolve();
     if ( "name" in expanded ) this.name = expanded.name;
     if ( "img" in expanded ) this.img = expanded.img;
     if ( expanded.system ) mergeObject(this.system, expanded.system);
