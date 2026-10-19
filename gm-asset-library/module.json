@@ -11,7 +11,7 @@
   "download": "https://github.com/FatherGoatly/Justgoofingtm/releases/latest/download/gm-asset-library.zip",
   "compatibility": {
     "minimum": "14.368",
-    "verified": "14.368",
+    "verified": "14.369",
     "maximum": "14"
   },
   "esmodules": [
