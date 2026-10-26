@@ -15,9 +15,9 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.10.0",
-    "eslint": "^10.6.0",
+    "eslint": "^10.13.0",
     "globals": "^17.7.0",
     "jsdom": "^26.1.0",
-    "vitest": "^5.0.4"
+    "vitest": "^5.0.5"
   }
 }
