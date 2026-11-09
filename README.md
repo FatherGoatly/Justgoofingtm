@@ -24,7 +24,7 @@ npm test
 npm run package      # dist/stat-block-importer.zip + dist/module.json
 ```
 
-Requirements: Foundry VTT 14.367 or later (verified 14.369) and dnd5e 6.0.0 or later (verified against 6.0.6 sources).
+Requirements: Foundry VTT 14.367 or later (verified 14.370) and dnd5e 6.0.0 or later (verified against 6.0.6 sources).
 
 ## Usage
 

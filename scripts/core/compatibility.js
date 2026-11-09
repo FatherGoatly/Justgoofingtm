@@ -12,7 +12,7 @@ import { enabledIntegrations } from "./settings.js";
 
 /** Tested combinations. "tested" means exercised in a real Foundry world; "mock" means adapter tests only. */
 export const COMPATIBILITY_MATRIX = Object.freeze([
-  { id: "core", name: "Foundry VTT", min: "14.367", verified: "14.369", status: "verified-by-source", notes: "Document schemas verified against dnd5e 6.0.6 sources targeting 14.367+." },
+  { id: "core", name: "Foundry VTT", min: "14.367", verified: "14.370", status: "verified-by-source", notes: "Document schemas verified against dnd5e 6.0.6 sources targeting 14.367+." },
   { id: "dnd5e", name: "D&D 5e system", min: "6.0.0", verified: "6.0.6", status: "verified-by-source", notes: "Item/Actor/Activity/Effect data models read from release-6.0.6." },
   { id: "midi-qol", name: "Midi-QOL", min: "14.6.0", verified: "14.6.2", status: "mock", notes: "Adapter uses documented workflow hooks and `function.` on-use macros. Requires dae." },
   { id: "dae", name: "Dynamic Active Effects", min: "14.6.0", verified: "14.6.1", status: "mock", notes: "Special durations and extended effect keys." },
